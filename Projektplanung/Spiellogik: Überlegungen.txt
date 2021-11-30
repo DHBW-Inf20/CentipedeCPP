@@ -1,0 +1,31 @@
+GameTick: 1/20s bzw. 50ms
+
+GameCounter++
+CentipedeSlowdown (init = 5 -> min = 1)
+
+Paket 1: if(GameTick % 2 == 0)
+1.1. Move Bullet
+1.2. Spawn Bullet: one above !old! Player-Position
+1.3. Collision Bullet-Mushroom
+2.   Move Player
+
+Paket 2: if(GameTick % CentipedeSlowdown == 0)
+1.4. Move Centipede [
+       - sequentiell berechnen, nicht parallelisiert
+]
+
+Paket 3: always
+1.5. Collision Bullet-Centipede(Head), Spawn Mushroom on Death
+1.6. Collision Bullet-Centepede(Body)
+1+2. (joined) Collision Player-Centipede
+
+
+//--------------------------------------------------
+CentepedeHead->Tail->Tail->Tail->...
+if(Tail == nullptr){
+    // Raupe aus der Liste entfernen
+    // Pilz an Raupenkopfposition setzen
+}else{
+    CentepedeHead:  Position = Tail->getPosition()
+                    Tail = Tail->getTail()
+}
