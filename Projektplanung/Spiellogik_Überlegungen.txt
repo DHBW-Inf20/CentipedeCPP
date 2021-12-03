@@ -29,3 +29,23 @@ if(Tail == nullptr){
     CentepedeHead:  Position = Tail->getPosition()
                     Tail = Tail->getTail()
 }
+
+
+Leerraum:           " "
+Raupenkörper:       "☉☉☉☉☉☉☉☉☹︎♓︎♓︎♓︎♓︎♓︎♓︎♓︎"
+Raupenkopf:         "☹︎"
+Pilz:               "⚘♣︎"
+Raumschiff:         "☥⚜︎⛢☃︎♙♗
+Schuss:             "|・▴▵"
+Feld (Konzept):
+
+Score:              ◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎
+167                 ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎
+                    ◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎◼︎
