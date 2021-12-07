@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/Projekt/v16/.suo
+.vs/Projekt/v16/Browse.VC.db
+.vs/Projekt/v16/ipch/AutoPCH/d2e03be04847eac2/STARTUP.ipch
