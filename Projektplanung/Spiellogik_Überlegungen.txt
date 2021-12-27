@@ -15,7 +15,7 @@ Paket 2: if(GameTick % CentipedeSlowdown == 0)
 ]
 
 Paket 3: always
-1.5. Collision Bullet-Centipede(Head), Spawn Mushroom on Death
+1.5. Collision Bullet-Centipede(Head), Spawn Mushroom
 1.6. Collision Bullet-Centepede(Body)
 1+2. (joined) Collision Player-Centipede
 
