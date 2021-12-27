@@ -37,6 +37,10 @@ void println(std::string content){
     std::cout << content << std::endl;
 }
 
+void print(std::string content){
+    std::cout << content;
+}
+
 bool askYN(std::string question){
     println(question + " (y/n)");
     bool hasAnswer;

@@ -10,6 +10,8 @@ std::string readSingleConsoleInput();
 
 void println(std::string content);
 
+void print(std::string content);
+
 bool askYN(std::string question);
 
 class AnsiExcapeCodes{
