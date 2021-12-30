@@ -2,14 +2,7 @@
 #include <iostream>
 #include <string>
 #include <thread> // contains <chrono>
-using namespace std;
-
-void println(const string& s="") {
-    cout << s << endl;
-}
-
-
-
+using namespace std; // Kommentar C++ Gruppe: Finden wir auch kacke, ist aber aus Quelltreue drin geblieben ;)
 
 // ASCII codes (key>0): 8 backspace, 9 tab, 10 newline, 27 escape, 127 delete, !"#$%&'()*+,-./0-9:;<=>?@A-Z[]^_`a-z{|}~üäÄöÖÜßµ´§°¹³²
 // control key codes (key<0): -38/-40/-37/-39 up/down/left/right arrow, -33/-34 page up/down, -36/-35 pos1/end
@@ -76,7 +69,7 @@ int key_press() { // not working: F11 (-122, toggles fullscreen)
         }
     }
 }
-#else//if defined(__linux__)
+#else
 #include <sys/ioctl.h>
 #include <termios.h>
 int key_press() { // not working: ¹ (251), num lock (-144), caps lock (-20), windows key (-91), kontext menu key (-93)
@@ -87,10 +80,18 @@ int key_press() { // not working: ¹ (251), num lock (-144), caps lock (-20), wi
         tcsetattr(0, TCSANOW, &term);
         int nbbytes;
         ioctl(0, FIONREAD, &nbbytes); // 0 is STDIN
-        while(!nbbytes) {         
+        // Edit RE: Wir dürfen an dieser Stelle blockierend warten, sonst kann die 
+        // App nicht beendet werden, ohne danach nochmal eine Taste zu drücken.
+        if(!nbbytes) {         
             fflush(stdout);
-            ioctl(0, FIONREAD, &nbbytes); // 0 is STDIN
+            return 0;
         }
+        // Original Code:
+        // while(!nbbytes) {         
+        //     fflush(stdout);
+        //     ioctl(0, FIONREAD, &nbbytes); // 0 is STDIN
+        // }
+
         int key = (int)getchar();
         if(key==27||key==194||key==195) { // escape, 194/195 is escape for °ß´äöüÄÖÜ
             key = (int)getchar();

@@ -45,7 +45,7 @@ void printResult(bool passed, std::string errorMessage){
 
 void printTestSummary(bool passed){
     AnsiExcapeCodes ansiExcapeCodes;
-    println(ansiExcapeCodes.boldOn + "Summary: " + getColouredResult(passed, "Please check previous messages for details." + ansiExcapeCodes.boldOff));
+    println(ansiExcapeCodes.boldOn + "Summary: " + getColouredResult(passed, "Please check previous messages for details.") + ansiExcapeCodes.boldOff);
 }
 
 /**
