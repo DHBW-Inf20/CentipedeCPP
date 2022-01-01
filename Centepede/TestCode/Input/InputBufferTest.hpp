@@ -9,6 +9,7 @@ bool inputBuffer_DefaultValueTest(){
     result = assertEquals(false, buffer->getAndResetShot()) & result;
     result = assertEquals(false, buffer->getAndResetBreakoutMenu()) & result;
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -19,6 +20,7 @@ bool inputBuffer_SetDirectionTest(){
     buffer->setDirection(newDirection);
     auto result = assertEquals(newDirection, buffer->getAndResetDirection());
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -33,6 +35,7 @@ bool inputBuffer_SetDirectionFailAtNoneTest(){
     }
     auto result = assertEquals(true, error);
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -42,6 +45,7 @@ bool inputBuffer_SetShotTest(){
     buffer->setShot();
     auto result = assertEquals(true, buffer->getAndResetShot());
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -51,6 +55,7 @@ bool inputBuffer_SetBreakoutMenuTest(){
     buffer->setBreakoutMenu();
     auto result = assertEquals(true, buffer->getAndResetBreakoutMenu());
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -61,6 +66,7 @@ bool inputBuffer_ResetAfterGetDirectionTest(){
     buffer->getAndResetDirection();
     auto result = assertEquals(none, buffer->getAndResetDirection());
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -71,6 +77,7 @@ bool inputBuffer_ResetAfterGetShotTest(){
     buffer->getAndResetShot();
     auto result = assertEquals(false, buffer->getAndResetShot());
     delete buffer;
+    endTest();
     return result;
 }
 
@@ -81,18 +88,19 @@ bool inputBuffer_ResetAfterGetBreakoutMenuTest(){
     buffer->getAndResetBreakoutMenu();
     auto result = assertEquals(false, buffer->getAndResetBreakoutMenu());
     delete buffer;
+    endTest();
     return result;
 }
 
 void runInputBufferTest(){
     printTestName("InputBuffer Test");
     auto result = inputBuffer_DefaultValueTest();
-    result = inputBuffer_SetDirectionTest() & result;
-    result = inputBuffer_SetDirectionFailAtNoneTest() & result;
-    result = inputBuffer_SetShotTest() & result;
-    result = inputBuffer_SetBreakoutMenuTest() & result;
-    result = inputBuffer_ResetAfterGetDirectionTest() & result;
-    result = inputBuffer_ResetAfterGetShotTest() & result;
-    result = inputBuffer_ResetAfterGetBreakoutMenuTest() & result;
+    result &= inputBuffer_SetDirectionTest();
+    result &= inputBuffer_SetDirectionFailAtNoneTest();
+    result &= inputBuffer_SetShotTest();
+    result &= inputBuffer_SetBreakoutMenuTest();
+    result &= inputBuffer_ResetAfterGetDirectionTest();
+    result &= inputBuffer_ResetAfterGetShotTest();
+    result &= inputBuffer_ResetAfterGetBreakoutMenuTest();
     printTestSummary(result);
 }

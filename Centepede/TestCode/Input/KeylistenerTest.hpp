@@ -28,6 +28,7 @@ bool keylistener_startStopTest(){
 
     // Print result
     printResult(true, "");
+    endTest();
     return true;
 }
 
@@ -53,6 +54,7 @@ bool keylistener_registerHandlerTest(){
     // Print result
     // If fails: Never ends
     printResult(true, "");
+    endTest();
     return true;
 }
 
@@ -85,6 +87,7 @@ bool keylistener_overwriteHandlerTest(){
 
     // print result
     printResult(result, "fist handler still active");
+    endTest();
     return result;
 }
 
@@ -110,6 +113,7 @@ bool keylistener_addHandlerWhileRunningTest(){
     // print result
     // never ends if not working
     printResult(true, "");
+    endTest();
     return true;
 }
 
@@ -144,6 +148,7 @@ bool keylistener_removeHandlerTest(){
 
     // print result
     printResult(result, "fist handler still active");
+    endTest();
     return result;
 }
 
@@ -155,10 +160,10 @@ bool keylistener_removeHandlerTest(){
 void runKeylistenerTest(){
     printTestName("Keylistener Test");
     auto result = keylistener_startStopTest();
-    result = keylistener_registerHandlerTest() & result;
-    result = keylistener_overwriteHandlerTest() & result;
-    result = keylistener_addHandlerWhileRunningTest() & result;
-    result = keylistener_removeHandlerTest() & result;
+    result &= keylistener_registerHandlerTest();
+    result &= keylistener_overwriteHandlerTest();
+    result &= keylistener_addHandlerWhileRunningTest();
+    result &= keylistener_removeHandlerTest();
     printTestSummary(result);
 }
 

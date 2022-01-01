@@ -40,7 +40,7 @@ std::string getColouredResult(bool passed, std::string errorMessage){
  */
 void printResult(bool passed, std::string errorMessage){
     std::string result = getColouredResult(passed, errorMessage);
-    println(result);
+    print(result + " ");
 }
 
 void printTestSummary(bool passed){
@@ -57,6 +57,10 @@ bool assertEquals(TObject expected, TObject actual){
     std::string errorMessage = "value: " + std::to_string(actual) + ", expected: " + std::to_string(expected);
     printResult(equal, errorMessage);
     return equal;
+}
+
+void endTest(){
+    println("");
 }
 
 #endif

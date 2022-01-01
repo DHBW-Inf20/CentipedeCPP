@@ -9,7 +9,8 @@
 #include <mutex>
 #include <shared_mutex>
 
-class Keylistener{
+class Keylistener
+{
     private:
         /** 
          * The map to store the event handlers.
