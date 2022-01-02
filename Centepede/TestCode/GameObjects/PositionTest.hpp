@@ -13,7 +13,7 @@ bool position_init0Test(){
     return result;
 }
 
-bool position_initGetLineTest(){
+bool position_getLineTest(){
     printSubTestName("Position get line test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto position = new Position(5, 0, settings);
@@ -23,7 +23,7 @@ bool position_initGetLineTest(){
     return result;
 }
 
-bool position_initGetColumnTest(){
+bool position_getColumnTest(){
     printSubTestName("Position get column test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto position = new Position(0, 5, settings);
@@ -71,10 +71,10 @@ bool position_initAboveMaxTest(){
 bool position_upTest(){
     printSubTestName("Position up test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(0, 9, settings);
+    auto position = new Position(10, 0, settings);
     auto moved = position->up();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(8, position->getColumn());
+    result &= assertEquals(9, position->getLine());
     delete position;
     endTest();
     return result;
@@ -86,7 +86,7 @@ bool position_upOutOfBoundsTest(){
     auto position = new Position(0, 0, settings);
     auto moved = position->up();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(0, position->getColumn());
+    result &= assertEquals(0, position->getLine());
     delete position;
     endTest();
     return result;
@@ -98,7 +98,7 @@ bool position_downTest(){
     auto position = new Position(0, 0, settings);
     auto moved = position->down();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(1, position->getColumn());
+    result &= assertEquals(1, position->getLine());
     delete position;
     endTest();
     return result;
@@ -107,10 +107,10 @@ bool position_downTest(){
 bool position_downOutOfBoundsTest(){
     printSubTestName("Position down out of bounds test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(0, 9, settings);
+    auto position = new Position(10, 0, settings);
     auto moved = position->down();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(9, position->getColumn());
+    result &= assertEquals(10, position->getLine());
     delete position;
     endTest();
     return result;
@@ -119,10 +119,10 @@ bool position_downOutOfBoundsTest(){
 bool position_leftTest(){
     printSubTestName("Position left test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 0, settings);
+    auto position = new Position(0, 9, settings);
     auto moved = position->left();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(9, position->getLine());
+    result &= assertEquals(8, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -134,7 +134,7 @@ bool position_leftOutOfBoundsTest(){
     auto position = new Position(0, 0, settings);
     auto moved = position->left();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(0, position->getLine());
+    result &= assertEquals(0, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -146,7 +146,7 @@ bool position_rightTest(){
     auto position = new Position(0, 0, settings);
     auto moved = position->right();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(1, position->getLine());
+    result &= assertEquals(1, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -155,10 +155,10 @@ bool position_rightTest(){
 bool position_rightOutOfBoundsTest(){
     printSubTestName("Position right out of bounds test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 0, settings);
+    auto position = new Position(0, 9, settings);
     auto moved = position->right();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(10, position->getLine());
+    result &= assertEquals(9, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -191,8 +191,8 @@ bool position_equalsFalseTest(){
 void runPositionTest(){
     printTestName("Position Test");
     auto result = position_init0Test();
-    result &= position_initGetLineTest();
-    result &= position_initGetColumnTest();
+    result &= position_getLineTest();
+    result &= position_getColumnTest();
     result &= position_initMaxTest();
     result &= position_initBelow0Test();
     result &= position_initAboveMaxTest();

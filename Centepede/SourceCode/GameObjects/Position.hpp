@@ -39,10 +39,10 @@ class Position
          */
         bool up()
         {
-            if(this->columnOutOfBounds(this->column - 1)){
+            if(this->lineOutOfBounds(this->line - 1)){
                 return false;
             }
-            this->column--;
+            this->line--;
             return true;
         }
 
@@ -53,10 +53,10 @@ class Position
          */
         bool down()
         {
-            if(this->columnOutOfBounds(this->column + 1)){
+            if(this->lineOutOfBounds(this->line + 1)){
                 return false;
             }
-            this->column++;
+            this->line++;
             return true;
         }
 
@@ -67,10 +67,10 @@ class Position
          */
         bool left()
         {
-            if(this->lineOutOfBounds(this->line - 1)){
+            if(this->columnOutOfBounds(this->column - 1)){
                 return false;
             }
-            this->line--;
+            this->column--;
             return true;
         }
 
@@ -81,10 +81,10 @@ class Position
          */
         bool right()
         {
-            if(this->columnOutOfBounds(this->line + 1)){
+            if(this->columnOutOfBounds(this->column + 1)){
                 return false;
             }
-            this->line++;
+            this->column++;
             return true;
         }
 

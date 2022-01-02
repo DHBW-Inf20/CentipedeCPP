@@ -2,6 +2,7 @@
 #include "Input/InputBufferTest.hpp"
 #include "Input/KeylistenerTest.hpp"
 #include "GameObjects/PositionTest.hpp"
+#include "GameObjects/BulletTest.hpp"
 
 // ###############################
 // Run Tests
@@ -24,7 +25,8 @@ void runInputTestSuite()
  */
 void runGameObjectsTestSuite()
 {
-    runPositionTest();
+    // runPositionTest();
+    runBulletTest();
 }
 
 int main(int argc, char** argv)
