@@ -1,6 +1,7 @@
 #ifndef POSITION_HPP
 #define POSITION_HPP
 #include "../Common/CentipedeSettings.hpp"
+#include "../Common/Utils.hpp"
 #include <memory>
 
 class Position
@@ -8,28 +9,14 @@ class Position
     private:
         int line;
         int column;
-        std::shared_ptr<CentipedeSettings> centipedeSettings_ptr;
-
-        bool lineOutOfBounds(int line)
-        {
-            if(line < 0) return true;
-            if(line >= this->centipedeSettings_ptr->getPlayingFieldWidth()) return true;
-            return false;
-        }
-
-        bool columnOutOfBounds(int column)
-        {
-            if(column < 0) return true;
-            if(column >= this->centipedeSettings_ptr->getPlayingFieldHeigt()) return true;
-            return false;
-        }
+        std::shared_ptr<CentipedeSettings> settings_ptr;
 
     public:
-        Position(int line, int column, std::shared_ptr<CentipedeSettings> centipedeSettings_ptr)
+        Position(int line, int column, std::shared_ptr<CentipedeSettings> settings_ptr)
         {
-            this->centipedeSettings_ptr = centipedeSettings_ptr;
-            this->line = this->lineOutOfBounds(line) ? 0 : line;
-            this->column = this->columnOutOfBounds(column) ? 0 : column;
+            this->settings_ptr = settings_ptr;
+            this->line = lineOutOfBounds(line, this->settings_ptr) ? 0 : line;
+            this->column = columnOutOfBounds(column, this->settings_ptr) ? 0 : column;
         }
 
         /**
@@ -39,7 +26,7 @@ class Position
          */
         bool up()
         {
-            if(this->lineOutOfBounds(this->line - 1)){
+            if(lineOutOfBounds(this->line - 1, this->settings_ptr)){
                 return false;
             }
             this->line--;
@@ -53,7 +40,7 @@ class Position
          */
         bool down()
         {
-            if(this->lineOutOfBounds(this->line + 1)){
+            if(lineOutOfBounds(this->line + 1, this->settings_ptr)){
                 return false;
             }
             this->line++;
@@ -67,7 +54,7 @@ class Position
          */
         bool left()
         {
-            if(this->columnOutOfBounds(this->column - 1)){
+            if(columnOutOfBounds(this->column - 1, this->settings_ptr)){
                 return false;
             }
             this->column--;
@@ -81,7 +68,7 @@ class Position
          */
         bool right()
         {
-            if(this->columnOutOfBounds(this->column + 1)){
+            if(columnOutOfBounds(this->column + 1, this->settings_ptr)){
                 return false;
             }
             this->column++;

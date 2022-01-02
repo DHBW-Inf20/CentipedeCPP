@@ -6,10 +6,24 @@ class CentipedeSettings
     private:
         int playingFieldHeight = 28;
         int playingFieldWidth = 30;
+        int initialMushroomHealth = 3;
+    
     public:
-        int getPlayingFieldHeigt();
+        CentipedeSettings();
 
-        int getPlayingFieldWidth();
+        int getPlayingFieldHeight()
+        {
+            return this->playingFieldHeight;
+        }
+        int getPlayingFieldWidth()
+        {
+            return this->playingFieldWidth;
+        }
+        int getInitialMushroomHealth()
+        {
+            return this->initialMushroomHealth;
+        }
+
 };
 
 #endif

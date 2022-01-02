@@ -37,9 +37,9 @@ bool position_initMaxTest(){
     printSubTestName("Position init max test");
     auto settings = std::make_shared<CentipedeSettings>();
     // If there are 10 Columns on the Field, they are given the Indizes 0 to 9.
-    auto position = new Position(10, 9, settings);
-    auto result = assertEquals(10, position->getLine());
-    result &= assertEquals(9, position->getColumn());
+    auto position = new Position(9, 10, settings);
+    auto result = assertEquals(9, position->getLine());
+    result &= assertEquals(10, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -59,8 +59,8 @@ bool position_initBelow0Test(){
 bool position_initAboveMaxTest(){
     printSubTestName("Position init above max test");
     auto settings = std::make_shared<CentipedeSettings>();
-    // If there are 10 Columns on the Field, they are given the Indizes 0 to 9.
-    auto position = new Position(11, 10, settings);
+    // If there are 10 Columns on the Field, they are given the indizes 0 to 9.
+    auto position = new Position(10, 11, settings);
     auto result = assertEquals(0, position->getLine());
     result &= assertEquals(0, position->getColumn());
     delete position;
@@ -71,10 +71,10 @@ bool position_initAboveMaxTest(){
 bool position_upTest(){
     printSubTestName("Position up test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 0, settings);
+    auto position = new Position(9, 0, settings);
     auto moved = position->up();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(9, position->getLine());
+    result &= assertEquals(8, position->getLine());
     delete position;
     endTest();
     return result;
@@ -107,10 +107,10 @@ bool position_downTest(){
 bool position_downOutOfBoundsTest(){
     printSubTestName("Position down out of bounds test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 0, settings);
+    auto position = new Position(9, 0, settings);
     auto moved = position->down();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(10, position->getLine());
+    result &= assertEquals(9, position->getLine());
     delete position;
     endTest();
     return result;
@@ -119,10 +119,10 @@ bool position_downOutOfBoundsTest(){
 bool position_leftTest(){
     printSubTestName("Position left test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(0, 9, settings);
+    auto position = new Position(0, 10, settings);
     auto moved = position->left();
     auto result = assertEquals(true, moved);
-    result &= assertEquals(8, position->getColumn());
+    result &= assertEquals(9, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -155,10 +155,10 @@ bool position_rightTest(){
 bool position_rightOutOfBoundsTest(){
     printSubTestName("Position right out of bounds test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(0, 9, settings);
+    auto position = new Position(0, 10, settings);
     auto moved = position->right();
     auto result = assertEquals(false, moved);
-    result &= assertEquals(9, position->getColumn());
+    result &= assertEquals(10, position->getColumn());
     delete position;
     endTest();
     return result;
@@ -167,8 +167,8 @@ bool position_rightOutOfBoundsTest(){
 bool position_equalsTrueTest(){
     printSubTestName("Position equals true test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 5, settings);
-    Position other(10, 5, settings);
+    auto position = new Position(9, 5, settings);
+    Position other(9, 5, settings);
     auto equals = position->equals(other);
     auto result = assertEquals(true, equals);
     delete position;
@@ -179,7 +179,7 @@ bool position_equalsTrueTest(){
 bool position_equalsFalseTest(){
     printSubTestName("Position equals false test");
     auto settings = std::make_shared<CentipedeSettings>();
-    auto position = new Position(10, 5, settings);
+    auto position = new Position(9, 5, settings);
     Position other(3, 7, settings);
     auto equals = position->equals(other);
     auto result = assertEquals(false, equals);

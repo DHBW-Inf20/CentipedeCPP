@@ -3,6 +3,7 @@
 #include "Input/KeylistenerTest.hpp"
 #include "GameObjects/PositionTest.hpp"
 #include "GameObjects/BulletTest.hpp"
+#include "GameObjects/MushroomMapTest.hpp"
 
 // ###############################
 // Run Tests
@@ -26,7 +27,8 @@ void runInputTestSuite()
 void runGameObjectsTestSuite()
 {
     // runPositionTest();
-    runBulletTest();
+    // runBulletTest();
+    runMushroomMapTest();
 }
 
 int main(int argc, char** argv)

@@ -1,12 +1,9 @@
 #include "../SourceCode/Common/CentipedeSettings.hpp"
 
 
-int CentipedeSettings::getPlayingFieldHeigt()
+CentipedeSettings::CentipedeSettings()
 {
-    return 10;
-}
-
-int CentipedeSettings::getPlayingFieldWidth()
-{
-    return 11;
+    this->playingFieldHeight = 10;
+    this->playingFieldWidth = 11;
+    this->initialMushroomHealth = 3;
 }
