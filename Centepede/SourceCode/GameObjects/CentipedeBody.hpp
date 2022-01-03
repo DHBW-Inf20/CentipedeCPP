@@ -4,7 +4,11 @@
 
 class CentipedeBody: public CentipedePart
 {
+private:
+	
 
+public:
+	Centipede
 };
 
 #endif
