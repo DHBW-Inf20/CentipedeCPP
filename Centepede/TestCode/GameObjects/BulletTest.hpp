@@ -2,7 +2,8 @@
 #include "../../SourceCode/Common/CentipedeSettings.hpp"
 #include "../../SourceCode/GameObjects/Bullet.hpp"
 
-bool bullet_init0Test(){
+bool bullet_init0Test()
+{
     printSubTestName("Bullet init 0 test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto bullet = new Bullet(0, 0, settings);
@@ -13,7 +14,8 @@ bool bullet_init0Test(){
     return result;
 }
 
-bool bullet_getPositionTest(){
+bool bullet_getPositionTest()
+{
     printSubTestName("Bullet get position test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto bullet = new Bullet(7, 2, settings);
@@ -24,7 +26,8 @@ bool bullet_getPositionTest(){
     return result;
 }
 
-bool bullet_moveTest(){
+bool bullet_moveTest()
+{
     printSubTestName("Bullet move test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto bullet = new Bullet(7, 2, settings);
@@ -36,7 +39,8 @@ bool bullet_moveTest(){
     return result;
 }
 
-bool bullet_moveOutOfBoundsTest(){
+bool bullet_moveOutOfBoundsTest()
+{
     printSubTestName("Bullet move out of bounds test");
     auto settings = std::make_shared<CentipedeSettings>();
     auto bullet = new Bullet(0, 2, settings);
@@ -48,7 +52,8 @@ bool bullet_moveOutOfBoundsTest(){
     return result;
 }
 
-void runBulletTest(){
+void runBulletTest()
+{
     printTestName("Bullet Test");
     auto result = bullet_init0Test();
     result &= bullet_getPositionTest();

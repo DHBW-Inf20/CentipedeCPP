@@ -47,7 +47,7 @@ class MushroomMap
          */
         int getMushroom(int line, int column)
         {
-            if(lineOutOfBounds(line, this->settings_ptr) || columnOutOfBounds(column, this->settings_ptr))
+            if(isOutOfBoundsOrAtCentipedeEntry(line, column))
             {
                 return -1;
             }
@@ -59,11 +59,19 @@ class MushroomMap
          */
         void spawnMushroom(int line, int column)
         {
-            if(lineOutOfBounds(line, this->settings_ptr) || columnOutOfBounds(column, this->settings_ptr))
+            if(isOutOfBoundsOrAtCentipedeEntry(line, column))
             {
                 return;
             }
             this->mushroomMap[line][column] = this->settings_ptr->getInitialMushroomHealth();
+        }
+
+        // Methode hinzugefügt
+        bool isOutOfBoundsOrAtCentipedeEntry(int line, int column)
+        {
+            return lineOutOfBounds(line, this->settings_ptr)
+                || columnOutOfBounds(column, this->settings_ptr)
+                || (line == 0 && column == (this-settings_ptr->getPlayingFieldWidth - 1) / 2);
         }
 
         /**
