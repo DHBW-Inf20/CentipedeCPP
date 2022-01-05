@@ -4,6 +4,7 @@
 #include "GameObjects/PositionTest.hpp"
 #include "GameObjects/BulletTest.hpp"
 #include "GameObjects/MushroomMapTest.hpp"
+#include "GameObjects/StarshipTest.hpp"
 
 // ###############################
 // Run Tests
@@ -28,11 +29,12 @@ void runGameObjectsTestSuite()
 {
     // runPositionTest();
     // runBulletTest();
-    runMushroomMapTest();
+    runStarshipTest();
+    // runMushroomMapTest();
 }
 
 int main(int argc, char** argv)
 {
-    runInputTestSuite();
-    // runGameObjectsTestSuite();
+    // runInputTestSuite();
+    runGameObjectsTestSuite();
 }

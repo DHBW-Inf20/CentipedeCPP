@@ -7,7 +7,7 @@
 class Starship
 {
 private:
-	std::shared_ptr<Position> position_ptr;
+	std::unique_ptr<Position> position_ptr;
 	std::shared_ptr<CentipedeSettings> settings_ptr;
 
 public:
@@ -17,7 +17,7 @@ public:
 		this->position_ptr = std::make_unique<Position>(line, column, settings_ptr);
 	}
 
-	std::shared_ptr<Position> getPosition()
+	Position getPosition()
 	{
 		return *(this->position_ptr);
 	}
@@ -26,19 +26,19 @@ public:
 	{
 		switch (direction)
 		{
-		case none:
+		case Direction::none:
 			return true;
 			break;
-		case up:
+		case Direction::up:
 			return this->position_ptr->up();
 			break;
-		case down:
+		case Direction::down:
 			return this->position_ptr->down();
 			break;
-		case left:
+		case Direction::left:
 			return this->position_ptr->left();
 			break;
-		case right:
+		case Direction::right:
 			return this->position_ptr->right();
 			break;
 		default:
@@ -51,13 +51,6 @@ public:
 	{
 		int line = this->position_ptr->getLine();
 		int column = this->position_ptr->getColumn();
-
-		return Bullet(line, column).getPosition();
-	}
-
-	~Starship()
-	{
-		delete position_ptr;
-		delete settings_ptr;
+		return std::make_shared<Bullet>(line, column, this->settings_ptr);
 	}
 };

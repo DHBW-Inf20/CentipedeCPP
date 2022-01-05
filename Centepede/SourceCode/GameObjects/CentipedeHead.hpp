@@ -7,13 +7,10 @@
 
 class CentipedeHead : public CentipedePart
 {
-private:
-	enum movingDirection : int { left, right };		// Wie ist geplant dieses Enum zu verwenden?
-	int direction = 0;								// Hinzzgefügt
-
 public:
 	CentipedeHead(int bodySize, std::shared_ptr<Position> position_ptr)
 	{
+		this->bodySize = bodySize;
 		this->position_ptr = position_ptr;
 
 		for (int i = 0; i < bodySize; i++)
@@ -25,7 +22,7 @@ public:
 
 	CentipedeHead(std::shared_ptr<CentipedeBody> splitOfTail_ptr, std::shared_ptr<CentipedeSettings> )
 	{
-		CentipedeHead(, splitOfTail_ptr);		// Unvollständig
+		CentipedeHead(splitOfTail_ptr->bodySize);		// Unvollständig
 	}
 
 						// Warum besteht der Vektor aus Heads?
@@ -37,11 +34,13 @@ public:
 
 	}
 
-	~CentipedeHead()
-	{
-		delete tail_ptr;
-		delete position_ptr;
-	}
+	//bool isCollisionMushroom(MushroomMap& mushroomMap)	// Hinzugefügt
+	//{
+	//	int line = this->position_ptr->getLine();
+	//	int column = this->position_ptr->getColumn();
+
+	//	return mushroomMap.getMushroom(line, column) > 0;
+	//}
 };
 
 #endif
