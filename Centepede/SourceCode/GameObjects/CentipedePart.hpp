@@ -15,7 +15,7 @@ class CentipedePart
 		int bodySize;		// hinzugefügt
 
     public:
-		bool isCollision(Starship &starship)	// Name geändert
+		bool isCollision(Starship &starship)
 		{
 			int starshipLine = starship.getPosition().getLine();
 			int starshipColumn = starship.getPosition().getColumn();
@@ -25,7 +25,7 @@ class CentipedePart
 			return starshipLine == bodyPartLine && starshipColumn == bodyPartColumn;
 		}
 
-		bool collide(Bullet &bullet, MushroomMap& mushroomMap, std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr)
+		bool collide(Bullet &bullet)
 		{
 			int bulletLine = bullet.getPosition().getLine();
 			int bulletColumn = bullet.getPosition().getColumn();
@@ -33,6 +33,16 @@ class CentipedePart
 			int bodyPartColumn = this->position_ptr->getColumn();
 
 			return bulletLine == bodyPartLine && bulletColumn == bodyPartColumn;
+		}
+
+		Position getPosition()
+		{
+			return *(this->position_ptr);
+		}
+
+		std::shared_ptr<CentipedeBody> getTail()
+		{
+			return this->tail_ptr;
 		}
 };
 

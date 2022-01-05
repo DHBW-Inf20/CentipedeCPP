@@ -5,14 +5,15 @@
 class CentipedeBody: public CentipedePart
 {
 public:
-	CentipedeBody(std::shared_ptr<CentipedeBody> tail_ptr)
+	CentipedeBody(std::shared_ptr<Position> position_ptr, std::shared_ptr<CentipedeBody> tail_ptr)
 	{
-
+		this->position_ptr = position_ptr;
+		this->tail_ptr = tail_ptr;
 	}
 
-	bool move(std::shared_ptr<Position> position_ptr, CentipedeMovingDirection direction)
+	void move(std::shared_ptr<Position> position_ptr)
 	{
-
+		this->position_ptr = position_ptr;
 	}
 };
 

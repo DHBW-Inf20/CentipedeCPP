@@ -3,6 +3,7 @@
 #include "../"
 #include "CentipedePart.hpp"
 #include "Position.hpp"
+#include "Directions.hpp"
 #include <memory>
 
 class CentipedeHead : public CentipedePart
@@ -13,34 +14,55 @@ public:
 		this->bodySize = bodySize;
 		this->position_ptr = position_ptr;
 
-		for (int i = 0; i < bodySize; i++)
+		auto tail_ptr = std::make_shared<CentipedeBody>(position_ptr, nullptr);
+		for (int i = 0; i < bodySize - 1; i++)
 		{
-			// Wo sollen die anderen Körperteile hinplatziert werden?
-			// Vielleicht könnten die Körperteile in Zeitschritten erstellt werden?
+			tail_ptr = std::make_shared<CentipedeBody>(position_ptr, tail_ptr);
 		}
+		this->tail_ptr = tail_ptr;
 	}
 
-	CentipedeHead(std::shared_ptr<CentipedeBody> splitOfTail_ptr, std::shared_ptr<CentipedeSettings> )
+	CentipedeHead(std::shared_ptr<CentipedeBody> splitOfTail_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
 	{
-		CentipedeHead(splitOfTail_ptr->bodySize);		// Unvollständig
+		this->position_ptr = splitOfTail_ptr->getPosition();
+		this->tail_ptr = splitOfTail_ptr->getTail();
 	}
-
-						// Warum besteht der Vektor aus Heads?
-	bool move(MushroomMap &mushroomMap, std::vector<CentipedeHead> &centipedeList)
+			// Soll zusätzlich noch geprüft werden, ob unterhalb des Heads ein Pilz ist???
+	bool move(MushroomMap &mushroomMap, std::vector<CentipedeHead> &centipedeList, CentipedeMovingDirection direction)
 	{
-		int line = centipedeList[0].position_ptr->getLine();
-		int column = centipedeList[0].position_ptr->getColumn();
+		int line = this->position_ptr->getLine();
+		int column = this->position_ptr->getColumn();
+		bool verify = true;
 
+		for (int i = 0; i < centipedeList.size(); i++)
+		{
+			switch (direction)
+			{
+			case CentipedeMovingDirection::left:
+				if (isTakenPosition(line, column - 1, mushroomMap, centipedeList[i]))
+				{
+					verify = false;
+				}
+				break;
+			}
+			case CentipedeMovingDirection::right:
+				if (isTakenPosition(line, column + 1, mushroomMap, centipedeList[i]))
+				{
+					verify = false;
+				}
+				break;
+		}
 
+		return verify;
 	}
 
-	//bool isCollisionMushroom(MushroomMap& mushroomMap)	// Hinzugefügt
-	//{
-	//	int line = this->position_ptr->getLine();
-	//	int column = this->position_ptr->getColumn();
-
-	//	return mushroomMap.getMushroom(line, column) > 0;
-	//}
+	bool isTakenPosition(int line, int column, MushroomMap& mushroomMap, CentipedeHead& centipedeHead)
+	{
+		return mushroomMap.getMushroom(line, column) > 0
+			&& column < 1
+			&& line == centipedeHead.position_ptr->getLine()
+			&& column == centipedeHead.position_ptr->getColumn();
+	}
 };
 
 #endif
