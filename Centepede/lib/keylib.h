@@ -8,7 +8,7 @@ using namespace std; // Kommentar C++ Gruppe: Finden wir auch kacke, ist aber au
 // control key codes (key<0): -38/-40/-37/-39 up/down/left/right arrow, -33/-34 page up/down, -36/-35 pos1/end
 // other key codes (key<0): -45 insert, -144 num lock, -20 caps lock, -91 windows key, -93 kontext menu key, -112 to -123 F1 to F12
 // not working: ¹ (251), num lock (-144), caps lock (-20), windows key (-91), kontext menu key (-93), F11 (-122)
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 #include <Windows.h>

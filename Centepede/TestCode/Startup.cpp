@@ -33,6 +33,6 @@ void runGameObjectsTestSuite()
 
 int main(int argc, char** argv)
 {
-    // runInputTestSuite();
-    runGameObjectsTestSuite();
+    runInputTestSuite();
+    // runGameObjectsTestSuite();
 }

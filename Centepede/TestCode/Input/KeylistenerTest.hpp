@@ -47,7 +47,7 @@ bool keylistener_registerHandlerTest(){
     keylistener.startMultithreaded();
 
     // Wait for trigger to verify the Handler has been added
-    print("Press 't': ");
+    print("Press 't': \n");
     tSignal.await();
     keylistener.stop();
 
@@ -81,7 +81,7 @@ bool keylistener_overwriteHandlerTest(){
 
     // wait for signal to verify working handler is active, while first one needs to be disabled
     keylistener.startMultithreaded();
-    print("Press 't': ");
+    print("Press 't': \n");
     tSignal.await();
     keylistener.stop();
 
@@ -106,7 +106,7 @@ bool keylistener_addHandlerWhileRunningTest(){
     keylistener.registerHandler('t', testhandler);
 
     // wait for signal to verify handler is working
-    print("Press 't':");
+    print("Press 't': \n");
     tSignal.await();
     keylistener.stop();
 
@@ -142,7 +142,7 @@ bool keylistener_removeHandlerTest(){
 
     // wait for signal to verify working handler is active, while first one needs to be disabled
     keylistener.startMultithreaded();
-    print("Press in order: 't' then 'v':");
+    print("Press in order: 't' then 'v': \n");
     tSignal.await();
     keylistener.stop();
 
