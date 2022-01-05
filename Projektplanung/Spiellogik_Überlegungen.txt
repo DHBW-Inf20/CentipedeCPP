@@ -35,7 +35,7 @@ Leerraum:           " "
 Raupenkörper:       "☉☉☉☉☉☉☉☉☹︎♓︎♓︎♓︎♓︎♓︎♓︎♓︎"
 Raupenkopf:         "☹︎"
 Pilz:               "⚘♣︎"
-Raumschiff:         "☥⚜︎⛢☃︎♙♗
+Raumschiff:         "☥⚜︎⛢☃︎♙♗▴"
 Schuss:             "|・▴▵"
 Feld (Konzept):
 
