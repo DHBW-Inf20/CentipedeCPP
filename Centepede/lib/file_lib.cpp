@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <memory>
 
 File::File(std::string filepath){
     this->filepath = std::string(filepath);

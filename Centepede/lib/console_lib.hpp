@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 int showOptions(std::shared_ptr<std::vector<std::string>> options);
 

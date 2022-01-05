@@ -66,12 +66,12 @@ class MushroomMap
             this->mushroomMap[line][column] = this->settings_ptr->getInitialMushroomHealth();
         }
 
-        // Methode hinzugefügt
+        // Methode hinzugefï¿½gt
         bool isOutOfBoundsOrAtCentipedeEntry(int line, int column)
         {
             return lineOutOfBounds(line, this->settings_ptr)
                 || columnOutOfBounds(column, this->settings_ptr)
-                || (line == 0 && column == (this-settings_ptr->getPlayingFieldWidth - 1) / 2);
+                || (line == 0 && column == (this->settings_ptr->getPlayingFieldWidth() - 1) / 2);
         }
 
         /**
