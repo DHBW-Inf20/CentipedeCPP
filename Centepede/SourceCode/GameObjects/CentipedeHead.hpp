@@ -1,6 +1,5 @@
 #ifndef CENTIPEDE_HEAD_HPP
 #define CENTIPEDE_HEAD_HPP
-#include "../"
 #include "CentipedePart.hpp"
 #include "Position.hpp"
 #include "Directions.hpp"
@@ -27,7 +26,7 @@ public:
 		this->position_ptr = splitOfTail_ptr->getPosition();
 		this->tail_ptr = splitOfTail_ptr->getTail();
 	}
-			// Soll zusätzlich noch geprüft werden, ob unterhalb des Heads ein Pilz ist???
+			// Soll zusï¿½tzlich noch geprï¿½ft werden, ob unterhalb des Heads ein Pilz ist???
 	bool move(MushroomMap &mushroomMap, std::vector<CentipedeHead> &centipedeList, CentipedeMovingDirection direction)
 	{
 		int line = this->position_ptr->getLine();
