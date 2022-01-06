@@ -201,6 +201,7 @@ void runStarshipTest()
     result &= starship_moveOutOfBoundsDownTest();
     result &= starship_moveOutOfBoundsLeftTest();
     result &= starship_moveOutOfBoundsRightTest();
+    // TODO JF von RE: Test moveObstacleMushroom();
     result &= starship_shootTest();
     printTestSummary(result);
 }

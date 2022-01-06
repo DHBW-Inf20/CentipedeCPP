@@ -1,3 +1,5 @@
+#ifndef STARSHIP_HPP
+#define STARSHIP_HPP
 #include "../Common/CentipedeSettings.hpp"
 #include "../Common/Directions.hpp"
 #include "Position.hpp"
@@ -54,3 +56,5 @@ public:
 		return std::make_shared<Bullet>(line, column, this->settings_ptr);
 	}
 };
+
+#endif

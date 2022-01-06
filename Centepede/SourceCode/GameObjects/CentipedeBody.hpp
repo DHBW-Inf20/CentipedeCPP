@@ -5,13 +5,18 @@
 class CentipedeBody: public CentipedePart
 {
 public:
-	CentipedeBody(std::shared_ptr<Position> position_ptr, std::shared_ptr<CentipedeBody> tail_ptr)
+	// Hier wird bewusst die Position kopiert!!
+	CentipedeBody(Position position_ptr, std::shared_ptr<CentipedeBody> tail_ptr, CentipedeMovingDirection direction)
 	{
 		this->position_ptr = position_ptr;
 		this->tail_ptr = tail_ptr;
 	}
 
-	void move(std::shared_ptr<Position> position_ptr)
+	// Hier wird bewusst die Position kopiert!!
+	/**
+	 * TODO JF von RE
+	 */
+	void move(Position position_ptr, CentipedeMovingDirection direction)
 	{
 		this->position_ptr = position_ptr;
 	}
