@@ -2,7 +2,7 @@
 #define CENTIPEDE_BODY_HPP
 #include "CentipedePart.hpp"
 
-class CentipedeBody: public CentipedePart
+class CentipedeBody : public CentipedePart
 {
 public:
 	// Hier wird bewusst die Position kopiert!!

@@ -33,10 +33,10 @@ void runGameObjectsTestSuite()
     // runPositionTest();
     // runBulletTest();
     // runMushroomMapTest();
-    // runStarshipTest();
-    runCentipedePartTest();
-    runCentipedeBodyTest();
-    runCentipedeHeadTest();
+    runStarshipTest();
+    // runCentipedePartTest();
+    // runCentipedeBodyTest();
+    // runCentipedeHeadTest();
 }
 
 int main(int argc, char** argv)
