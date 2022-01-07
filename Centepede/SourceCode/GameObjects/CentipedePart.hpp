@@ -53,8 +53,9 @@ class CentipedePart
 			while (hit == false && tempTail_ptr != nullptr)
 			{
 				hit = this->position.equals(position);
-				tempPosition = *(tempTail_ptr)->getPosition();
-				tempTail_ptr = *(tempTail_ptr)->getTail();
+
+				tempPosition = *tempTail_ptr->getPosition();
+				tempTail_ptr = tempTail_ptr->getTail();
 			}
 
 			return hit;
@@ -72,7 +73,7 @@ class CentipedePart
 			auto tempPosition = this->position;
 			auto tempTail_ptr = this->getTail();
 
-			while (hit = 0 && tempTail_ptr != nullptr)
+			while (hit == 0 && tempTail_ptr != nullptr)
 			{
 				if (isDirectHit(bulletPosition, tempPosition))
 				{
@@ -80,15 +81,12 @@ class CentipedePart
 
 					mushroomMap->spawnMushroom(this->getPosition().getLine(), this->getPosition().getColumn());
 
-					// int line = *(tail_ptr)->getPosition().getLine();
-					// int column = *(tail_ptr)->getPosition().getColumn();
-					// CentipedeMovingDirection direction = (this->getMovingDirection == 0) ? 1 : 0;
-					auto head = new CentipedeHead(tail_ptr);
-					centipedes_ptr->push_back(head);
+					auto head = new CentipedeHead(this->tail_ptr);
+					centipedes_ptr->push_back(*head);
 
-					delete position;
-					delete tail_ptr;
-					delete movingDirection;
+					// delete position;
+					// delete tail_ptr;
+					// delete movingDirection;
 					
 					break;
 				}
@@ -96,15 +94,15 @@ class CentipedePart
 				{
 					hit = CentipedeHit::tailHit;
 					
-					if (*(tempTail_ptr)->collide(bullet, mushroomMap, centipedes_ptr))
+					if (*tempTail_ptr->collide(bullet, mushroomMap, centipedes_ptr))
 					{
-						this->tail_ptr = nullptr;
+						this->tail_ptr = 0;
 					}
 					break;
 				}
 
-				tempPosition = *(tempTail_ptr)->getPosition();
-				tempTail_ptr = *(tempTail_ptr)->getTail();
+				tempPosition = *tempTail_ptr->getPosition();
+				tempTail_ptr = *tempTail_ptr->getTail();
 			}
 
 			return hit;
@@ -115,7 +113,7 @@ class CentipedePart
 		*/
 		Position getPosition()
 		{
-			return *(this->position_ptr);
+			return this->position;
 		}
 
 		/**
