@@ -5,7 +5,7 @@
 #include "GameObjects/BulletTest.hpp"
 #include "GameObjects/MushroomMapTest.hpp"
 #include "GameObjects/StarshipTest.hpp"
-// #include "GameObjects/CentipedePartTest.hpp"
+#include "GameObjects/CentipedePartTest.hpp"
 // #include "GameObjects/CentipedeBodyTest.hpp"
 // #include "GameObjects/CentipedeHeadTest.hpp"
 
@@ -33,8 +33,8 @@ void runGameObjectsTestSuite()
     // runPositionTest();
     // runBulletTest();
     // runMushroomMapTest();
-    runStarshipTest();
-    // runCentipedePartTest();
+    // runStarshipTest();
+    runCentipedePartTest();
     // runCentipedeBodyTest();
     // runCentipedeHeadTest();
 }

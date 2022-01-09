@@ -4,20 +4,72 @@
 #include "CentipedeBody.hpp"
 #include "Position.hpp"
 #include "../Common/Directions.hpp"
+#include "../Common/Utils.hpp"
 #include <memory>
 
 class CentipedeHead : public CentipedePart
 {
 	private:
-		/**
-		* Checks wheter the next position is taken from a mushroom or another centipede head.
-		*/
-		bool isTakenPosition(int line, int column, MushroomMap& mushroomMap, CentipedeHead& centipedeHead)
+		void changeDirection()
 		{
-			return mushroomMap.getMushroom(line, column) > 0
-				&& column < 1
-				&& line == centipedeHead.position_ptr->getLine()
-				&& column == centipedeHead.position_ptr->getColumn();
+			switch(this->movingDirection)
+			{
+				case CentipedeMovingDirection::cLeft:
+					{
+						this->movingDirection = CentipedeMovingDirection::cRight;
+					}
+				case CentipedeMovingDirection::cRight:
+					{
+						this->movingDirection = CentipedeMovingDirection::cLeft;
+					}
+			}
+		}
+		bool isCentipede(int line, int column, std::vector<CentipedeHead> &centipedeList)
+		{
+			bool noCentipede = true;
+			for(auto centipede : centipedeList)
+			{
+				// no need to filter centipede List for own, since this centipede never wants to go to a location it is already in.
+				noCentipede = noCentipede && !centipede.isAtPosition(line, column);
+			}
+			return noCentipede;
+		}
+
+		/**
+		* Checks wheter the next position is taken from a mushroom or another centipede.
+		*/
+		bool isValidPosition(int line, int column, MushroomMap& mushroomMap, std::vector<CentipedeHead> &centipedeList)
+		{
+			if(mushroomMap.getMushroom(line, column) != 0)
+			{
+				// If position out of bounds (returns -1) or there is a mushroom (returns value > 0).
+				return false;
+			}
+			// Is possible position for a centipede to be -> check others.
+			return this->isCentipede(line, column, centipedeList);
+		}
+
+		void changeLane(std::vector<CentipedeHead> &centipedeList, std::shared_ptr<CentipedeSettings> settings_ptr)
+		{
+			auto line = this->position.getLine();
+			auto column = this->position.getColumn();
+			if(lineOutOfBounds(line + 1, settings_ptr) || isCentipede(line + 1, column, centipedeList))
+			{
+				// Can't go down, either out of bounds or centipede.
+				if(lineOutOfBounds(line - 1, settings_ptr) || isCentipede(line + 1, column, centipedeList))
+				{
+					// Can't go up either, do nothing.
+					return;
+				}
+				// can go up
+				this->position.up();
+				this->changeDirection();
+				return;
+			}
+			// can go down
+			this->position.down();
+			this->changeDirection();
+			return;
 		}
 
 	public:
@@ -25,19 +77,13 @@ class CentipedeHead : public CentipedePart
 		* Constructor for new Centipede at the field.
 		*/
 		CentipedeHead(int line, int column, CentipedeMovingDirection direction, std::shared_ptr<CentipedeSettings> settings_ptr, int bodySize)
+			: CentipedePart(line, column, settings_ptr, direction, nullptr)
 		{
-			this->bodySize = bodySize;
-			this->position_ptr = std::make_shared<Position>(line, column, settings_ptr);
+			std::shared_ptr<CentipedeBody> tail_ptr = nullptr;
 
-			auto tail_ptr = std::make_shared<CentipedeBody>(position_ptr, nullptr);
-
-			for (int i = 0; i < bodySize - 1; i++)
+			for (int centipedePartCount = 1; centipedePartCount < bodySize; centipedePartCount++)
 			{
-				auto position_ptr = std::make_shared<Position>(line, column, settings_ptr);
-
-				auto body = new CentipedeBody(position_ptr);
-
-				tail_ptr = std::make_shared<CentipedeBody>(position_ptr, tail_ptr);
+				tail_ptr = std::make_shared<CentipedeBody>(this->position, tail_ptr, direction);
 			}
 
 			this->tail_ptr = tail_ptr;
@@ -47,40 +93,37 @@ class CentipedeHead : public CentipedePart
 		* Constructor for Centipede part after hit with bullet.
 		*/
 		CentipedeHead(std::shared_ptr<CentipedeBody> splitOfTail_ptr)
+			: CentipedePart(splitOfTail_ptr->getPosition(), splitOfTail_ptr->getMovingDirection(), splitOfTail_ptr->getTail())
 		{
-			this->position_ptr = std::make_shared<Position>(splitOfTail_ptr->getPosition());
-			this->tail_ptr = splitOfTail_ptr->getTail();
 		}
 
 		/**
 		* Checks wheter the centipede head meets a mushroom.
 		*/
-		bool move(MushroomMap &mushroomMap, std::vector<CentipedeHead> &centipedeList)
+		bool move(MushroomMap &mushroomMap, std::vector<CentipedeHead> &centipedeList, std::shared_ptr<CentipedeSettings> settings_ptr)
 		{
-			int line = this->position_ptr->getLine();
-			int column = this->position_ptr->getColumn();
-			bool verify = true;
+			int line = this->position.getLine();
+			int column = this->position.getColumn();
 
-			for (int i = 0; i < centipedeList.size(); i++)
+			switch (this->movingDirection)
 			{
-				switch (direction)
-				{
-				case CentipedeMovingDirection::left:
-					if (isTakenPosition(line, column - 1, mushroomMap, centipedeList[i]))
+				case CentipedeMovingDirection::cLeft:
+					if (isValidPosition(line, column - 1, mushroomMap, centipedeList))
 					{
-						verify = false;
+						return this->position.left(); // always true;
 					}
+					// way is blocked
+					this->changeLane(centipedeList, settings_ptr);
 					break;
-				}
-				case CentipedeMovingDirection::right:
-					if (isTakenPosition(line, column + 1, mushroomMap, centipedeList[i]))
+				case CentipedeMovingDirection::cRight:
+					if (isValidPosition(line, column + 1, mushroomMap, centipedeList))
 					{
-						verify = false;
+						return this->position.right(); // always true;
 					}
+					// way is blocked
+					this->changeLane(centipedeList, settings_ptr);
 					break;
 			}
-
-			return verify;
 		}
 };
 

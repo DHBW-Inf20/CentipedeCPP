@@ -1,5 +1,6 @@
 #ifndef CENTIPEDE_PART_HPP
 #define CENTIPEDE_PART_HPP
+#include "../Common/CentipedeSettings.hpp"
 #include "CentipedeBody.hpp"
 #include "Position.hpp"
 #include "Starship.hpp"
@@ -22,20 +23,14 @@ class CentipedePart
         Position position;
 		CentipedeMovingDirection movingDirection;
 
-		/**
-		* Checks wheter the CentipedePart got a direct hit with the Bullet.
-		*/
-		bool isDirectHit(Position bulletPosition, Position tempPosition)
+		CentipedePart(int line, int column, std::shared_ptr<CentipedeSettings> settings_ptr, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedeBody> tail_ptr)
+			: position(line, column, settings_ptr), movingDirection(movingDirection), tail_ptr(nullptr)
 		{
-			return tempPosition.equals(bulletPosition) && tempPosition == this->getPosition();
 		}
 
-		/**
-		* Checks wheter the tail of the CentipedePart got a hit with the Bullet.
-		*/
-		bool isTailHit(Position bulletPosition, Position tempPosition)
+		CentipedePart(Position position, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedeBody> tail_ptr)
+			: position(position), movingDirection(movingDirection), tail_ptr(nullptr)
 		{
-			return tempPosition.equals(bulletPosition);
 		}
 
     public:
@@ -45,20 +40,27 @@ class CentipedePart
 		*/
 		bool isAtPosition(Position &position)
 		{
-			bool hit = false;
-
-			auto tempPosition = this->position;
-			auto tempTail_ptr = this->getTail();
-
-			while (hit == false && tempTail_ptr != nullptr)
+			bool directHit = this->position.equals(position);
+			if(this->tail_ptr == nullptr)
 			{
-				hit = this->position.equals(position);
-
-				tempPosition = *tempTail_ptr->getPosition();
-				tempTail_ptr = tempTail_ptr->getTail();
+				return directHit;
 			}
+			// Has Tail
+			return directHit || this->tail_ptr->isAtPosition(position);
+		}
 
-			return hit;
+		/**
+		* Checks wheter the CentipedePart has the same position like the Starship.
+		*/
+		bool isAtPosition(int line, int column)
+		{
+			bool directHit = this->position.equals(line, column);
+			if(this->tail_ptr == nullptr)
+			{
+				return directHit;
+			}
+			// Has Tail
+			return directHit || this->tail_ptr->isAtPosition(line, column);
 		}
 
 		/**
@@ -66,46 +68,33 @@ class CentipedePart
 		*/
 		CentipedeHit collide(Bullet &bullet, std::shared_ptr<MushroomMap> mushroomMap, std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr)
 		{
-			auto hit = CentipedeHit::noHit;
-
-			auto bulletPosition = bullet.getPosition();
-			
-			auto tempPosition = this->position;
-			auto tempTail_ptr = this->getTail();
-
-			while (hit == 0 && tempTail_ptr != nullptr)
+			auto hit = bullet.getPosition().equals(this->position);
+			if(hit)
 			{
-				if (isDirectHit(bulletPosition, tempPosition))
-				{
-					hit = CentipedeHit::directHit;
-
-					mushroomMap->spawnMushroom(this->getPosition().getLine(), this->getPosition().getColumn());
-
-					auto head = new CentipedeHead(this->tail_ptr);
-					centipedes_ptr->push_back(*head);
-
-					// delete position;
-					// delete tail_ptr;
-					// delete movingDirection;
-					
-					break;
-				}
-				else if (isTailHit(bulletPosition, tempPosition))
-				{
-					hit = CentipedeHit::tailHit;
-					
-					if (*tempTail_ptr->collide(bullet, mushroomMap, centipedes_ptr))
-					{
-						this->tail_ptr = 0;
-					}
-					break;
-				}
-
-				tempPosition = *tempTail_ptr->getPosition();
-				tempTail_ptr = *tempTail_ptr->getTail();
+				// Direct hit on this part of the centipede.
+				// Tail needs to become new Centipede in list.
+				CentipedeHead newCentipedeFromTail(this->tail_ptr);
+				centipedes_ptr->push_back(newCentipedeFromTail);
+				// This object will be disposed, when parent removes Tail ptr.
+				return CentipedeHit::directHit;
 			}
 
-			return hit;
+			// No direct hit -> check on tail.
+			if(this->tail_ptr == nullptr)
+			{
+				// No more tail to check on -> no place to hit.
+				return CentipedeHit::noHit;
+			}
+
+			auto tailResult = this->collide(bullet, mushroomMap, centipedes_ptr);
+			if(tailResult == CentipedeHit::noHit || tailResult == CentipedeHit::tailHit)
+			{
+				return tailResult;
+			}
+			// tailResult == CentipedeHit::directHit:
+			// This part is now end of the centipede.
+			this->tail_ptr = nullptr;
+			return CentipedeHit::tailHit;
 		}
 
 		/**

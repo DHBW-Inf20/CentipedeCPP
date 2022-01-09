@@ -45,11 +45,12 @@ bool centipedePart_getMovingDirectionTest()
 
 bool centipedePart_isAtPositionFalseTest()
 {
-	printSubTestName("CentipedePart is collision false test");
+	printSubTestName("CentipedePart is at position false test");
 	auto settings = std::make_shared<CentipedeSettings>();
     Position position(7, 2, settings);
 	auto part = new CentipedeBody(position, nullptr, CentipedeMovingDirection::cRight);
-	auto result = assertEquals(false, part->isAtPosition(position));
+    Position otherPosition(7, 3, settings);
+	auto result = assertEquals(false, part->isAtPosition(otherPosition));
 	delete part;
 	endTest();
 	return result;
@@ -57,7 +58,7 @@ bool centipedePart_isAtPositionFalseTest()
 
 bool centipedePart_isAtPositionTrueTest()
 {
-	printSubTestName("CentipedePart is collision true test");
+	printSubTestName("CentipedePart is at position true test");
 	auto settings = std::make_shared<CentipedeSettings>();
     Position position(7, 2, settings);
 	auto part = new CentipedeBody(position, nullptr, CentipedeMovingDirection::cRight);
@@ -69,7 +70,7 @@ bool centipedePart_isAtPositionTrueTest()
 
 bool centipedePart_isAtPositionTailTrueTest()
 {
-	printSubTestName("CentipedePart is collision false");
+	printSubTestName("CentipedePart is at position false");
 	auto settings = std::make_shared<CentipedeSettings>();
 	Position positionTail(7, 2, settings);
 
@@ -78,6 +79,46 @@ bool centipedePart_isAtPositionTailTrueTest()
 	auto part = new CentipedeBody(position, tail, CentipedeMovingDirection::cRight);
 
 	auto result = assertEquals(true, part->isAtPosition(positionTail));
+	delete part;
+	endTest();
+	return result;
+}
+
+bool centipedePart_isAtPositionLineColumnFalseTest()
+{
+	printSubTestName("CentipedePart is at position line column false test");
+	auto settings = std::make_shared<CentipedeSettings>();
+    Position position(7, 2, settings);
+	auto part = new CentipedeBody(position, nullptr, CentipedeMovingDirection::cRight);
+	auto result = assertEquals(false, part->isAtPosition(7, 3));
+	delete part;
+	endTest();
+	return result;
+}
+
+bool centipedePart_isAtPositionLineColumnTrueTest()
+{
+	printSubTestName("CentipedePart is at position line column true test");
+	auto settings = std::make_shared<CentipedeSettings>();
+    Position position(7, 2, settings);
+	auto part = new CentipedeBody(position, nullptr, CentipedeMovingDirection::cRight);
+	auto result = assertEquals(true, part->isAtPosition(7, 2));
+	delete part;
+	endTest();
+	return result;
+}
+
+bool centipedePart_isAtPositionLineColumnTailTrueTest()
+{
+	printSubTestName("CentipedePart is at position line column false");
+	auto settings = std::make_shared<CentipedeSettings>();
+	Position positionTail(7, 2, settings);
+
+    Position position(0, 0, settings);
+	auto tail = std::make_shared<CentipedeBody>(positionTail, nullptr, CentipedeMovingDirection::cRight);
+	auto part = new CentipedeBody(position, tail, CentipedeMovingDirection::cRight);
+
+	auto result = assertEquals(true, part->isAtPosition(0, 0));
 	delete part;
 	endTest();
 	return result;
@@ -176,6 +217,9 @@ void runCentipedePartTest()
 	result &= centipedePart_isAtPositionFalseTest();
 	result &= centipedePart_isAtPositionTrueTest();
 	result &= centipedePart_isAtPositionTailTrueTest();
+	result &= centipedePart_isAtPositionLineColumnFalseTest();
+	result &= centipedePart_isAtPositionLineColumnTrueTest();
+	result &= centipedePart_isAtPositionLineColumnTailTrueTest();
 	result &= centipedePart_collideNoHitTest();
 	result &= centipedePart_collideDirectHitNoTailTest();
 	result &= centipedePart_collideDirectHitTest();

@@ -188,6 +188,28 @@ bool position_equalsFalseTest(){
     return result;
 }
 
+bool position_equalsLineColumnTrueTest(){
+    printSubTestName("Position equals line column true test");
+    auto settings = std::make_shared<CentipedeSettings>();
+    auto position = new Position(9, 5, settings);
+    auto equals = position->equals(9, 5);
+    auto result = assertEquals(true, equals);
+    delete position;
+    endTest();
+    return result;
+}
+
+bool position_equalsLineColumnFalseTest(){
+    printSubTestName("Position equals line column false test");
+    auto settings = std::make_shared<CentipedeSettings>();
+    auto position = new Position(9, 5, settings);
+    auto equals = position->equals(3, 7);
+    auto result = assertEquals(false, equals);
+    delete position;
+    endTest();
+    return result;
+}
+
 void runPositionTest(){
     printTestName("Position Test");
     auto result = position_init0Test();
@@ -206,5 +228,7 @@ void runPositionTest(){
     result &= position_rightOutOfBoundsTest();
     result &= position_equalsTrueTest();
     result &= position_equalsFalseTest();
+    result &= position_equalsLineColumnTrueTest();
+    result &= position_equalsLineColumnFalseTest();
     printTestSummary(result);
 }

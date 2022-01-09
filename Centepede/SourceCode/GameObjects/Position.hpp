@@ -100,6 +100,16 @@ class Position
             return this->line == other.getLine()
                 && this->column == other.getColumn();
         }
+
+        /**
+         * Compares its line- and column-values to the parameters.
+         * Returns true if both are equal, false otherwise.
+         */
+        bool equals(int line, int column)
+        {
+            return this->line == line
+                && this->column == column;
+        }
 };
 
 #endif

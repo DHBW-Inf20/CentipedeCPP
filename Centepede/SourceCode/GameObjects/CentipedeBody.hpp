@@ -7,9 +7,8 @@ class CentipedeBody : public CentipedePart
 public:
 	// Hier wird bewusst die Position kopiert!!
 	CentipedeBody(Position position, std::shared_ptr<CentipedeBody> tail_ptr, CentipedeMovingDirection direction)
+		:CentipedePart(position, direction, tail_ptr)
 	{
-		this->position = position;
-		this->tail_ptr = std::make_shared<CentipedeBody>(position, tail_ptr);
 	}
 
 	// Hier wird bewusst die Position kopiert!!
