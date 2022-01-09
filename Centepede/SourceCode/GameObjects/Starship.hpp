@@ -15,10 +15,10 @@ private:
 	/**
 	* Checks whether the next position is accessible for the Starship.
 	* */
-	bool isNoTakenPosition(bool freeDirection, MushroomMap& mushroomMap, int line, int column)
+	bool isPossibleMove(MushroomMap& mushroomMap, int line, int column)
 	{
-		return freeDirection
-			&& mushroomMap.getMushroom(line, column) == 0;
+		// Mushroom map returns -1 if coordinates are out of bounds.
+		return mushroomMap.getMushroom(line, column) == 0;
 	}
 
 public:
@@ -48,23 +48,37 @@ public:
 		{
 		case Direction::none:
 			return true;
-			break;
 		case Direction::up:
-			return isNoTakenPosition(this->position_ptr->up(), mushroomMap, line - 1, column);
-			break;
+			if(isPossibleMove(mushroomMap, line - 1, column))
+			{
+				return this->position_ptr->up();
+			}
+			// out of bounds or mushroom.
+			return false;
 		case Direction::down:
-			return isNoTakenPosition(this->position_ptr->down(), mushroomMap, line + 1, column);
-			break;
+			if(isPossibleMove(mushroomMap, line + 1, column))
+			{
+				return this->position_ptr->down();
+			}
+			// out of bounds or mushroom.
+			return false;
 		case Direction::left:
-			return isNoTakenPosition(this->position_ptr->left(), mushroomMap, line, column - 1);
-			break;
+			if(isPossibleMove(mushroomMap, line, column - 1))
+			{
+				return this->position_ptr->left();
+			}
+			// out of bounds or mushroom.
+			return false;
 		case Direction::right:
-			return isNoTakenPosition(this->position_ptr->right(), mushroomMap, line, column + 1);
-			break;
-		default:
-			break;
+			if(isPossibleMove(mushroomMap, line, column + 1))
+			{
+				return this->position_ptr->right();
+			}
+			// out of bounds or mushroom.
+			return false;
+		default: // unknown direction.
+			return false;
 		}
-		return false;
 	}
 
 	/**
