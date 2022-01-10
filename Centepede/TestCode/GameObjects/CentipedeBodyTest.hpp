@@ -7,12 +7,12 @@ bool centipedeBody_initTest()
 	printSubTestName("CentipedeBody init test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto position = std::make_shared<Position>(0, 0, settings);
-	auto tail = std::make_shared<CentipedeBody>(position, nullptr);
+	auto tail = std::make_shared<CentipedeBody>(*position, nullptr, CentipedeMovingDirection::cRight);
 	
 	auto body = new CentipedeBody(*position, tail, CentipedeMovingDirection::cRight);
 	auto bodyPosition = body->getPosition();
 	auto result = assertEquals(true, position->equals(bodyPosition));
-	result &= assertEquals(tail, body->getTail());
+	result &= tail == body->getTail();
 	delete body;
 	endTest();
 	return result;

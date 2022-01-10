@@ -6,8 +6,8 @@
 #include "GameObjects/MushroomMapTest.hpp"
 #include "GameObjects/StarshipTest.hpp"
 #include "GameObjects/CentipedePartTest.hpp"
-// #include "GameObjects/CentipedeBodyTest.hpp"
-// #include "GameObjects/CentipedeHeadTest.hpp"
+#include "GameObjects/CentipedeBodyTest.hpp"
+#include "GameObjects/CentipedeHeadTest.hpp"
 
 // ###############################
 // Run Tests
@@ -35,8 +35,8 @@ void runGameObjectsTestSuite()
     // runMushroomMapTest();
     // runStarshipTest();
     runCentipedePartTest();
-    // runCentipedeBodyTest();
-    // runCentipedeHeadTest();
+    runCentipedeBodyTest();
+    runCentipedeHeadTest();
 }
 
 int main(int argc, char** argv)

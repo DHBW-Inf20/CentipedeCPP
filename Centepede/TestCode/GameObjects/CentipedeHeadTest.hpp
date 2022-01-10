@@ -13,7 +13,7 @@ bool centipedeHead_initNew1Test()
 	auto headPosition = head->getPosition();
 	auto result = assertEquals(true, position->equals(headPosition));
 	result &= assertEquals(CentipedeMovingDirection::cRight, head->getMovingDirection());
-	result &= assertEquals<std::shared_ptr<CentipedeBody>>(nullptr, head->getTail());
+	result &= nullptr == head->getTail();
 
 	delete head;
 	endTest();
@@ -30,7 +30,7 @@ bool centipedeHead_initNewSmaller1Test()
 	auto headPosition = head->getPosition();
 	auto result = assertEquals(true, position->equals(headPosition));
 	result &= assertEquals(CentipedeMovingDirection::cRight, head->getMovingDirection());
-	result &= assertEquals<std::shared_ptr<CentipedeBody>>(nullptr, head->getTail());
+	result &= nullptr == head->getTail();
 
 	delete head;
 	endTest();
@@ -57,7 +57,7 @@ bool centipedeHead_initNewBigger1Test()
 	result &= assertEquals(CentipedeMovingDirection::cRight, head->getMovingDirection());
 	result &= assertEquals(CentipedeMovingDirection::cRight, body1->getMovingDirection());
 	result &= assertEquals(CentipedeMovingDirection::cRight, body2->getMovingDirection());
-	result &= assertEquals<std::shared_ptr<CentipedeBody>>(nullptr, body2->getTail()); // End of Centipede
+	result &= nullptr  == body2->getTail(); // End of Centipede
 
 	delete head;
 	endTest();
@@ -79,7 +79,7 @@ bool centipedeHead_initFromTailTest()
 
 	auto result = assertEquals(true, position->equals(headPosition));
     result &= assertEquals(CentipedeMovingDirection::cRight, head->getMovingDirection());
-    result &= assertEquals(tail, head->getTail());
+    result &= tail == head->getTail();
 
 	delete head;
 	endTest();
@@ -91,11 +91,11 @@ bool centipedeHead_moveLeftTest()
 	printSubTestName("CentipedeHead move left test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto mushroomMap = std::make_shared<MushroomMap>(settings);
-	auto centipedes = std::make_shared<std::vector<CentipedeHead>>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
 	auto position = std::make_shared<Position>(7, 2, settings);
 	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cLeft, settings, 2);
     
-    head->move(*mushroomMap, *centipedes);
+    head->move(*mushroomMap, *centipedes, settings);
 
 	auto headPosition = head->getPosition();
     auto tailPosition = head->getTail()->getPosition();
@@ -114,11 +114,11 @@ bool centipedeHead_moveRightTest()
 	printSubTestName("CentipedeHead move right test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto mushroomMap = std::make_shared<MushroomMap>(settings);
-	auto centipedes = std::make_shared<std::vector<CentipedeHead>>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
 	auto position = std::make_shared<Position>(7, 2, settings);
 	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
     
-    head->move(*mushroomMap, *centipedes);
+    head->move(*mushroomMap, *centipedes, settings);
 
 	auto headPosition = head->getPosition();
     auto tailPosition = head->getTail()->getPosition();
@@ -134,15 +134,15 @@ bool centipedeHead_moveRightTest()
 
 bool centipedeHead_moveObstacleMushroomTest()
 {
-	printSubTestName("CentipedeHead move obstacle test");
+	printSubTestName("CentipedeHead move obstacle mushroom test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto mushroomMap = std::make_shared<MushroomMap>(settings);
     mushroomMap->spawnMushroom(7,3);
-	auto centipedes = std::make_shared<std::vector<CentipedeHead>>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
 	auto position = std::make_shared<Position>(7, 2, settings);
 	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
     
-    head->move(*mushroomMap, *centipedes);
+    head->move(*mushroomMap, *centipedes, settings);
 
 	auto headPosition = head->getPosition();
     auto tailPosition = head->getTail()->getPosition();
@@ -160,14 +160,14 @@ bool centipedeHead_moveObstacleMushroomTest()
 
 bool centipedeHead_moveObstacleFieldEndTest()
 {
-	printSubTestName("CentipedeHead move obstacle test");
+	printSubTestName("CentipedeHead move obstacle field end test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto mushroomMap = std::make_shared<MushroomMap>(settings);
-	auto centipedes = std::make_shared<std::vector<CentipedeHead>>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
 	auto position = std::make_shared<Position>(7, settings->getPlayingFieldWidth()-1, settings);
 	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
     
-    head->move(*mushroomMap, *centipedes);
+    head->move(*mushroomMap, *centipedes, settings);
 
 	auto headPosition = head->getPosition();
     auto tailPosition = head->getTail()->getPosition();
@@ -185,16 +185,16 @@ bool centipedeHead_moveObstacleFieldEndTest()
 
 bool centipedeHead_moveObstacleCentipedeTest()
 {
-	printSubTestName("CentipedeHead move obstacle test");
+	printSubTestName("CentipedeHead move obstacle centipede test");
 	auto settings = std::make_shared<CentipedeSettings>();
 	auto mushroomMap = std::make_shared<MushroomMap>(settings);
-	auto centipedes = std::make_shared<std::vector<CentipedeHead>>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
 	CentipedeHead obstacle(7, 3, CentipedeMovingDirection::cRight, settings, 1);
     centipedes->push_back(obstacle);
 	auto position = std::make_shared<Position>(7, 2, settings);
 	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
     
-    head->move(*mushroomMap, *centipedes);
+    head->move(*mushroomMap, *centipedes, settings);
 
 	auto headPosition = head->getPosition();
     auto tailPosition = head->getTail()->getPosition();
@@ -204,6 +204,78 @@ bool centipedeHead_moveObstacleCentipedeTest()
     position->down();
 	result &= assertEquals(true, position->equals(headPosition));
 	result &= assertEquals(CentipedeMovingDirection::cLeft, head->getMovingDirection());
+
+	delete head;
+	endTest();
+	return result;
+}
+
+bool centipedeHead_moveReachBottomTest()
+{
+	printSubTestName("CentipedeHead move reach bottom test");
+	auto settings = std::make_shared<CentipedeSettings>();
+	auto mushroomMap = std::make_shared<MushroomMap>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
+	auto position = std::make_shared<Position>(settings->getPlayingFieldHeight() - 1, settings->getPlayingFieldWidth()-1, settings);
+	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
+    
+    head->move(*mushroomMap, *centipedes, settings);
+
+	auto headPosition = head->getPosition();
+
+    position->up();
+	auto result = assertEquals(true, position->equals(headPosition));
+	result &= assertEquals(CentipedeMovingDirection::cLeft, head->getMovingDirection());
+
+	delete head;
+	endTest();
+	return result;
+}
+
+bool centipedeHead_moveDownCentipedeBeneathTest()
+{
+	printSubTestName("CentipedeHead move down centipede beneath test");
+	auto settings = std::make_shared<CentipedeSettings>();
+	auto mushroomMap = std::make_shared<MushroomMap>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
+	CentipedeHead obstacle(8, settings->getPlayingFieldWidth() - 1, CentipedeMovingDirection::cRight, settings, 1);
+    centipedes->push_back(obstacle);
+	auto position = std::make_shared<Position>(7, settings->getPlayingFieldWidth() - 1, settings);
+	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
+    
+    head->move(*mushroomMap, *centipedes, settings);
+
+	auto headPosition = head->getPosition();
+
+    position->up();
+	auto result = assertEquals(true, position->equals(headPosition));
+	result &= assertEquals(CentipedeMovingDirection::cLeft, head->getMovingDirection());
+
+	delete head;
+	endTest();
+	return result;
+}
+
+bool centipedeHead_moveDownCentipedeBeneathAndAboveTest()
+{
+	printSubTestName("CentipedeHead move down centipede beneath and above test");
+	auto settings = std::make_shared<CentipedeSettings>();
+	auto mushroomMap = std::make_shared<MushroomMap>(settings);
+	auto centipedes = std::make_shared<std::vector<CentipedeHead>>();
+	CentipedeHead obstacle1(8, settings->getPlayingFieldWidth() - 1, CentipedeMovingDirection::cRight, settings, 1);
+	CentipedeHead obstacle2(6, settings->getPlayingFieldWidth() - 1, CentipedeMovingDirection::cRight, settings, 1);
+    centipedes->push_back(obstacle1);
+    centipedes->push_back(obstacle2);
+	auto position = std::make_shared<Position>(7, settings->getPlayingFieldWidth() - 1, settings);
+	auto head = new CentipedeHead(position->getLine(), position->getColumn(), CentipedeMovingDirection::cRight, settings, 2);
+    
+    head->move(*mushroomMap, *centipedes, settings);
+
+	auto headPosition = head->getPosition();
+
+    // position doesn't move
+	auto result = assertEquals(true, position->equals(headPosition));
+	result &= assertEquals(CentipedeMovingDirection::cRight, head->getMovingDirection());
 
 	delete head;
 	endTest();
@@ -222,6 +294,9 @@ void runCentipedeHeadTest()
 	result &= centipedeHead_moveObstacleMushroomTest();
 	result &= centipedeHead_moveObstacleFieldEndTest();
 	result &= centipedeHead_moveObstacleCentipedeTest();
+	result &= centipedeHead_moveReachBottomTest();
+	result &= centipedeHead_moveDownCentipedeBeneathTest();
+	result &= centipedeHead_moveDownCentipedeBeneathAndAboveTest();
 	printTestSummary(result);
 }
 

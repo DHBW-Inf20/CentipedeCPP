@@ -318,6 +318,16 @@ class GameLogic
             }
         }
 
+
+        /**
+         * Creates a new Centipede from the given Tail and adds it to the list.
+         */
+		void addNewCentipede(std::shared_ptr<CentipedePart> splitOfTail, std::shared_ptr<std::vector<CentipedePart>> centipedes_ptr)
+		{
+			CentipedeHead newCentipede(std::reinterpret_pointer_cast<CentipedeBody>(splitOfTail));
+			centipedes_ptr->push_back(newCentipede);
+		}
+
         /**
          * Handles collisions between centipedes and the starship.
          */

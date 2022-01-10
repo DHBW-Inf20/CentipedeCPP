@@ -24,7 +24,8 @@ class CentipedeHead : public CentipedePart
 					}
 			}
 		}
-		bool isCentipede(int line, int column, std::vector<CentipedeHead> &centipedeList)
+
+		bool freeOfCentipede(int line, int column, std::vector<CentipedeHead> &centipedeList)
 		{
 			bool noCentipede = true;
 			for(auto centipede : centipedeList)
@@ -46,30 +47,30 @@ class CentipedeHead : public CentipedePart
 				return false;
 			}
 			// Is possible position for a centipede to be -> check others.
-			return this->isCentipede(line, column, centipedeList);
+			return this->freeOfCentipede(line, column, centipedeList);
 		}
 
-		void changeLane(std::vector<CentipedeHead> &centipedeList, std::shared_ptr<CentipedeSettings> settings_ptr)
+		bool changeLane(std::vector<CentipedeHead> &centipedeList, std::shared_ptr<CentipedeSettings> settings_ptr)
 		{
 			auto line = this->position.getLine();
 			auto column = this->position.getColumn();
-			if(lineOutOfBounds(line + 1, settings_ptr) || isCentipede(line + 1, column, centipedeList))
+			if(lineOutOfBounds(line + 1, settings_ptr) || !freeOfCentipede(line + 1, column, centipedeList))
 			{
 				// Can't go down, either out of bounds or centipede.
-				if(lineOutOfBounds(line - 1, settings_ptr) || isCentipede(line + 1, column, centipedeList))
+				if(lineOutOfBounds(line - 1, settings_ptr) || !freeOfCentipede(line - 1, column, centipedeList))
 				{
 					// Can't go up either, do nothing.
-					return;
+					return false;
 				}
 				// can go up
 				this->position.up();
 				this->changeDirection();
-				return;
+				return true;
 			}
 			// can go down
 			this->position.down();
 			this->changeDirection();
-			return;
+			return true;
 		}
 
 	public:
@@ -113,17 +114,16 @@ class CentipedeHead : public CentipedePart
 						return this->position.left(); // always true;
 					}
 					// way is blocked
-					this->changeLane(centipedeList, settings_ptr);
-					break;
+					return this->changeLane(centipedeList, settings_ptr);
 				case CentipedeMovingDirection::cRight:
 					if (isValidPosition(line, column + 1, mushroomMap, centipedeList))
 					{
 						return this->position.right(); // always true;
 					}
 					// way is blocked
-					this->changeLane(centipedeList, settings_ptr);
-					break;
+					return this->changeLane(centipedeList, settings_ptr);
 			}
+			return false;
 		}
 };
 

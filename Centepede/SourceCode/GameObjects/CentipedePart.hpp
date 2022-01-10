@@ -1,12 +1,11 @@
 #ifndef CENTIPEDE_PART_HPP
 #define CENTIPEDE_PART_HPP
 #include "../Common/CentipedeSettings.hpp"
-#include "CentipedeBody.hpp"
 #include "Position.hpp"
 #include "Starship.hpp"
 #include "Bullet.hpp"
 #include "MushroomMap.hpp"
-#include "CentipedeHead.hpp"
+#include "../Common/Tuple.hpp"
 #include <memory>
 
 enum CentipedeHit : int 
@@ -19,17 +18,17 @@ enum CentipedeHit : int
 class CentipedePart
 {
     protected:
-        std::shared_ptr<CentipedeBody> tail_ptr;
+        std::shared_ptr<CentipedePart> tail_ptr;
         Position position;
 		CentipedeMovingDirection movingDirection;
 
-		CentipedePart(int line, int column, std::shared_ptr<CentipedeSettings> settings_ptr, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedeBody> tail_ptr)
-			: position(line, column, settings_ptr), movingDirection(movingDirection), tail_ptr(nullptr)
+		CentipedePart(int line, int column, std::shared_ptr<CentipedeSettings> settings_ptr, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedePart> tail_ptr)
+			: position(line, column, settings_ptr), movingDirection(movingDirection), tail_ptr(tail_ptr)
 		{
 		}
 
-		CentipedePart(Position position, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedeBody> tail_ptr)
-			: position(position), movingDirection(movingDirection), tail_ptr(nullptr)
+		CentipedePart(Position position, CentipedeMovingDirection movingDirection, std::shared_ptr<CentipedePart> tail_ptr)
+			: position(position), movingDirection(movingDirection), tail_ptr(tail_ptr)
 		{
 		}
 
@@ -64,37 +63,41 @@ class CentipedePart
 		}
 
 		/**
-		* Gives back the hit type with the Bullet. Direct hit -> this CentipedePart got hit, tail hit -> a CentipedePart of the tail got hit.
+		* Gives back the hit type with the Bullet and nullptr or the split of tail. Direct hit -> this CentipedePart got hit, tail hit -> a CentipedePart of the tail got hit.
 		*/
-		CentipedeHit collide(Bullet &bullet, std::shared_ptr<MushroomMap> mushroomMap, std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr)
+		Tuple<CentipedeHit, std::shared_ptr<CentipedePart>> collide(Bullet &bullet, std::shared_ptr<MushroomMap> mushroomMap)
 		{
 			auto hit = bullet.getPosition().equals(this->position);
 			if(hit)
 			{
 				// Direct hit on this part of the centipede.
 				// Tail needs to become new Centipede in list.
-				CentipedeHead newCentipedeFromTail(this->tail_ptr);
-				centipedes_ptr->push_back(newCentipedeFromTail);
+				// The Centipede Creation is done by the logic.
+				Tuple result(CentipedeHit::directHit, this->tail_ptr);
+				// Spawn the mushroom.
+				mushroomMap->spawnMushroom(this->position.getLine(), this->position.getColumn());
 				// This object will be disposed, when parent removes Tail ptr.
-				return CentipedeHit::directHit;
+				return result;
 			}
 
 			// No direct hit -> check on tail.
 			if(this->tail_ptr == nullptr)
 			{
 				// No more tail to check on -> no place to hit.
-				return CentipedeHit::noHit;
+				Tuple<CentipedeHit, std::shared_ptr<CentipedePart>> result(CentipedeHit::noHit, nullptr);
+				return result;
 			}
 
-			auto tailResult = this->collide(bullet, mushroomMap, centipedes_ptr);
-			if(tailResult == CentipedeHit::noHit || tailResult == CentipedeHit::tailHit)
+			auto tailResult = this->tail_ptr->collide(bullet, mushroomMap);
+			if(tailResult.getItem1() == CentipedeHit::noHit || tailResult.getItem1() == CentipedeHit::tailHit)
 			{
 				return tailResult;
 			}
 			// tailResult == CentipedeHit::directHit:
 			// This part is now end of the centipede.
 			this->tail_ptr = nullptr;
-			return CentipedeHit::tailHit;
+			Tuple result(CentipedeHit::tailHit, tailResult.getItem2());
+			return result;
 		}
 
 		/**
@@ -108,7 +111,7 @@ class CentipedePart
 		/**
 		* Gives back the pointer of the next CentipedeBody of the tail.
 		*/
-		std::shared_ptr<CentipedeBody> getTail()
+		std::shared_ptr<CentipedePart> getTail()
 		{
 			return this->tail_ptr;
 		}
