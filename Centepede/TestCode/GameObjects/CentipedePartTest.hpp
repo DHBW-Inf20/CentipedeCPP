@@ -135,8 +135,11 @@ bool centipedePart_collideNoHitTest()
     Bullet bullet(7, 2, settings);
 
 	auto part = new CentipedeBody(*position, nullptr, CentipedeMovingDirection::cRight);
-	auto result = assertEquals(CentipedeHit::noHit, part->collide(bullet, mushroomMap).getItem1());
-	result &= nullptr == part->collide(bullet, mushroomMap).getItem2();
+	auto collision = part->collide(bullet, mushroomMap);
+
+	auto result = assertEquals(CentipedeHit::noHit, collision.getItem1());
+	result &= nullptr == collision.getItem2();
+	printResult(result, "");
     result &= assertEquals(0, mushroomMap->getMushroom(7, 2));
     result &= assertEquals(0, mushroomMap->getMushroom(0, 0));
 	delete part;
@@ -154,8 +157,11 @@ bool centipedePart_collideDirectHitNoTailTest()
     Bullet bullet(position->getLine(), position->getColumn(), settings);
 
 	auto part = new CentipedeBody(*position, nullptr, CentipedeMovingDirection::cRight);
-	auto result = assertEquals(CentipedeHit::directHit, part->collide(bullet, mushroomMap).getItem1());
-	result &= nullptr == part->collide(bullet, mushroomMap).getItem2();
+	auto collision = part->collide(bullet, mushroomMap);
+	
+	auto result = assertEquals(CentipedeHit::directHit, collision.getItem1());
+	result &= nullptr == collision.getItem2();
+	printResult(result, "");
     result &= assertEquals(settings->getInitialMushroomHealth(), mushroomMap->getMushroom(position->getLine(), position->getColumn()));
 	delete part;
     
@@ -174,8 +180,11 @@ bool centipedePart_collideDirectHitTest()
 
 	auto tail = std::make_shared<CentipedeBody>(*positionTail, nullptr, CentipedeMovingDirection::cRight);
 	auto part = new CentipedeBody(*position, tail, CentipedeMovingDirection::cRight);
-	auto result = assertEquals(CentipedeHit::directHit, part->collide(bullet, mushroomMap).getItem1());
-	result &= tail == part->collide(bullet, mushroomMap).getItem2();
+	auto collision = part->collide(bullet, mushroomMap);
+
+	auto result = assertEquals(CentipedeHit::directHit, collision.getItem1());
+	result &= tail == collision.getItem2();
+	printResult(result, "");
     result &= assertEquals(settings->getInitialMushroomHealth(), mushroomMap->getMushroom(position->getLine(), position->getColumn()));
 	delete part;
     
@@ -196,8 +205,11 @@ bool centipedePart_collideTailHitTest()
 	auto tailTail = std::make_shared<CentipedeBody>(*positionTailTail, nullptr, CentipedeMovingDirection::cRight);
 	auto tail = std::make_shared<CentipedeBody>(*positionTail, tailTail, CentipedeMovingDirection::cRight);
 	auto part = new CentipedeBody(*position, tail, CentipedeMovingDirection::cRight);
-	auto result = assertEquals(CentipedeHit::tailHit, part->collide(bullet, mushroomMap).getItem1());
-	result &= nullptr == part->collide(bullet, mushroomMap).getItem2();
+	auto collision = part->collide(bullet, mushroomMap);
+
+	auto result = assertEquals(CentipedeHit::tailHit, collision.getItem1());
+	result &= tailTail == collision.getItem2();
+	printResult(result, "");
     result &= assertEquals(0, mushroomMap->getMushroom(position->getLine(), position->getColumn()));
     result &= assertEquals(settings->getInitialMushroomHealth(), mushroomMap->getMushroom(positionTail->getLine(), positionTail->getColumn()));
 	delete part;

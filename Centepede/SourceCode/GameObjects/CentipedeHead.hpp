@@ -54,6 +54,7 @@ class CentipedeHead : public CentipedePart
 		{
 			auto line = this->position.getLine();
 			auto column = this->position.getColumn();
+			// Mushrooms are ignored when changing lanes.
 			if(lineOutOfBounds(line + 1, settings_ptr) || !freeOfCentipede(line + 1, column, centipedeList))
 			{
 				// Can't go down, either out of bounds or centipede.
@@ -123,7 +124,6 @@ class CentipedeHead : public CentipedePart
 					// way is blocked
 					return this->changeLane(centipedeList, settings_ptr);
 			}
-			return false;
 		}
 };
 
