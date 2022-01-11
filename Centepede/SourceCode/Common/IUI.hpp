@@ -7,7 +7,7 @@
 class IUI 
 {
     public:
-		virtual void drawImage(int score, ITheme& theme, SaveState& state, CentipedeSettings &settings) = 0;
+		virtual void drawImage(int round, int score, ITheme& theme, SaveState& state, CentipedeSettings &settings) = 0;
 };
 
 #endif

@@ -49,6 +49,7 @@ class GameLogic
                 // Play through the round
                 while(this->isRunning() && this->continueRound(saveState_ptr->getCentipedes()))
                 {
+                    saveState_ptr->incrementGameTick();
                     // Await next game tick.
                     gameClock->await();
 
@@ -59,7 +60,7 @@ class GameLogic
 
                     // Print the current state to the UI.
                     // TODO RE score.
-                    this->printGame(0, saveState_ptr, settings_ptr);
+                    this->printGame(saveState_ptr->getCurrentRound(), 0, saveState_ptr, settings_ptr);
                 }
             }
 
@@ -124,9 +125,9 @@ class GameLogic
         /**
          * Prints the safeState to the UI.
          */
-        void printGame(int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
+        void printGame(int round, int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
         {
-            this->ui_ptr->drawImage(score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
+            this->ui_ptr->drawImage(round, score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
         }
 
         /**

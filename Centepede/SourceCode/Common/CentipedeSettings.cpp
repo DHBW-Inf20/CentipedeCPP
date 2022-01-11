@@ -7,7 +7,7 @@ CentipedeSettings::CentipedeSettings()
     this->initialMushroomHealth = 3;
     this->starshipModuloGametickSlowdown = 4;
     this->initialCentipedeModuloGametickSlowdown = 8;
-    this->gameTickLength = 100;
+    this->gameTickLength = 10;
     this->initialStarshipLine = 27;
     this->initialStarshipColumn = 14;
     this->centipedeSpawnLine = 0;
