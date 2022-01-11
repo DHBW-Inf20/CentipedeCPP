@@ -30,10 +30,10 @@ void runInputTestSuite()
  */
 void runGameObjectsTestSuite()
 {
-    // runPositionTest();
-    // runBulletTest();
-    // runMushroomMapTest();
-    // runStarshipTest();
+    runPositionTest();
+    runBulletTest();
+    runMushroomMapTest();
+    runStarshipTest();
     runCentipedePartTest();
     runCentipedeBodyTest();
     runCentipedeHeadTest();
@@ -42,5 +42,5 @@ void runGameObjectsTestSuite()
 int main(int argc, char** argv)
 {
     // runInputTestSuite();
-    runGameObjectsTestSuite();
+    // runGameObjectsTestSuite();
 }

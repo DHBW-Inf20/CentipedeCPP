@@ -20,6 +20,15 @@ class Bullet
         }
 
         /**
+         * Own copy constructer for looping over lists (for(auto bullet : bullets)).
+         * Probably not available by default because of unique_ptr.
+         */
+        Bullet(Bullet &bullet)
+        {
+            this->position = std::make_unique<Position>(bullet.getPosition());
+        }
+
+        /**
          * Returns a copy of the position object.
          */
         Position getPosition()
