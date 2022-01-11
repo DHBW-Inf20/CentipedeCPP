@@ -15,6 +15,13 @@
 #include <chrono>
 #include <iostream>
 
+enum ScoreType : int
+{
+    centipedeHit,
+    mushroomKill,
+    roundEnd
+};
+
 class GameLogic
 {
     private:
@@ -60,11 +67,37 @@ class GameLogic
 
                     // Print the current state to the UI.
                     // TODO RE score.
-                    this->printGame(saveState_ptr->getCurrentRound(), 0, saveState_ptr, settings_ptr);
+                    this->printGame(saveState_ptr->getCurrentRound(), saveState_ptr->getScore(), saveState_ptr, settings_ptr);
                 }
+
+                this->addToScore(ScoreType::roundEnd);
             }
 
             this->waitForGameClock();
+        }
+
+        void addToScore(ScoreType type)
+        {
+            auto saveState_ptr = this->saveState_ptr;
+            auto settings_ptr = saveState_ptr->getSettings();
+            switch(type)
+            {
+                case centipedeHit:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForCentipedeHit());
+                    break;
+                }
+                case mushroomKill:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForMushroomKill());
+                    break;
+                }
+                case roundEnd:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForRoundEnd());
+                    break;
+                }
+            }
         }
 
         /**
@@ -316,6 +349,11 @@ class GameLogic
             {
                 if(mushroomMap_ptr->collide(*bullet_ptr))
                 {
+                    // Check if Mushroom was killed
+                    if(mushroomMap_ptr->getMushroom(bullet_ptr->getPosition().getLine(), bullet_ptr->getPosition().getColumn()) == 0)
+                    {
+                        this->addToScore(ScoreType::mushroomKill);
+                    }
                     // Collision bullet & mushroom -> remove bullet.
                     bullet_ptr = bullets_ptr->erase(bullet_ptr);
                     // no increment here, since bullet_ptr already points to the following element.
@@ -393,6 +431,9 @@ class GameLogic
 
                     // Bullet has hit -> remove from list.
                     bullet_ptr = bullets_ptr->erase(bullet_ptr);
+                    // Update score
+                    this->addToScore(ScoreType::centipedeHit);
+
                     // Create new centipede from split of tail if necessary.
                     if(splitOfTail_ptr != nullptr)
                     {
@@ -485,13 +526,15 @@ class GameLogic
 			auto centipedes_ptr = std::make_shared<std::vector<CentipedeHead>>();
 			int currentCentipedeModuloGametickSlowdown = settings_ptr->getInitialCentipedeModuloGametickSlowdown();
             int currentRound = 0;
+            int score = 0;
             auto newState = std::make_shared<SaveState>(settings_ptr, 
                                                         bullets_ptr,
                                                         starship_ptr,
                                                         mushroomMap_ptr,
                                                         centipedes_ptr,
                                                         currentCentipedeModuloGametickSlowdown,
-                                                        currentRound);
+                                                        currentRound,
+                                                        score);
             this->continueGame(newState);
         }
 

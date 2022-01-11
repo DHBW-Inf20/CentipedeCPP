@@ -6,17 +6,24 @@ class CentipedeSettings
     private:
         int playingFieldHeight;
         int playingFieldWidth;
+
         int initialMushroomHealth;
-        int starshipModuloGametickSlowdown;
-        int initialCentipedeModuloGametickSlowdown;
-        int gameTickLength;
         int initialStarshipLine;
         int initialStarshipColumn;
         int centipedeSpawnLine;
         int centipedeSpawnColumn;
+
         int initialCentipedeSize;
         int centipedeSizeIncrementAmount;
         int centipedeSizeIncrementRoundModuloSlowdown;
+
+        int pointsForCentipedeHit;
+        int pointsForMushroomKill;
+        int pointsForRoundEnd;
+
+        int gameTickLength;
+        int starshipModuloGametickSlowdown;
+        int initialCentipedeModuloGametickSlowdown;
         int centipedeSpeedIncrementAmount;
         int centipedeSpeedIncrementRoundModuloSlowdown;
     
@@ -31,21 +38,10 @@ class CentipedeSettings
         {
             return this->playingFieldWidth;
         }
+        
         int getInitialMushroomHealth()
         {
             return this->initialMushroomHealth;
-        }
-        int getStarshipModuloGametickSlowdown()
-        {
-            return this->starshipModuloGametickSlowdown;
-        }
-        int getInitialCentipedeModuloGametickSlowdown()
-        {
-            return this->initialCentipedeModuloGametickSlowdown;
-        }
-        int getGameTickLength()
-        {
-            return this->gameTickLength;
         }
         int getInitialStarshipLine()
         {
@@ -63,6 +59,7 @@ class CentipedeSettings
         {
             return this->centipedeSpawnColumn;
         }
+        
         int getInitialCentipedeSize()
         {
             return this->initialCentipedeSize;
@@ -74,6 +71,32 @@ class CentipedeSettings
         int getCentipedeSizeIncrementRoundModuloSlowdown()
         {
             return this->centipedeSizeIncrementRoundModuloSlowdown;
+        }
+        
+        int getPointsForCentipedeHit()
+        {
+            return this->pointsForCentipedeHit;
+        }
+        int getPointsForMushroomKill()
+        {
+            return this->pointsForMushroomKill;
+        }
+        int getPointsForRoundEnd()
+        {
+            return this->pointsForRoundEnd;
+        }
+
+        int getGameTickLength()
+        {
+            return this->gameTickLength;
+        }
+        int getStarshipModuloGametickSlowdown()
+        {
+            return this->starshipModuloGametickSlowdown;
+        }
+        int getInitialCentipedeModuloGametickSlowdown()
+        {
+            return this->initialCentipedeModuloGametickSlowdown;
         }
         int getCentipedeSpeedIncrementAmount()
         {

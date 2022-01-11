@@ -20,6 +20,7 @@ class SaveState
 		std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr;
         int currentCentipedeModuloGametickSlowdown;
 		int currentRound;
+		int score;
 
 	public:
 		SaveState(std::shared_ptr<CentipedeSettings> settings_ptr,
@@ -28,7 +29,8 @@ class SaveState
 			std::shared_ptr<MushroomMap> mushroomMap_ptr,
 			std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr,
 			int currentCentipedeModuloGametickSlowdown,
-			int currentRound)
+			int currentRound,
+			int score)
 		{
 			this->gameTick = 0;
 			this->settings_ptr = settings_ptr;
@@ -38,6 +40,7 @@ class SaveState
 			this->centipedes_ptr = centipedes_ptr;
 			this->currentCentipedeModuloGametickSlowdown = currentCentipedeModuloGametickSlowdown;
 			this->currentRound = currentRound;
+			this->score = score;
 		}
 
 		std::shared_ptr<CentipedeSettings> getSettings()
@@ -98,6 +101,16 @@ class SaveState
 		void incrementCurrentRound()
 		{
 			this->currentRound++;
+		}
+
+		void addToScore(int amount)
+		{
+			this->score += amount;
+		}
+
+		int getScore()
+		{
+			return this->score;
 		}
 };
 
