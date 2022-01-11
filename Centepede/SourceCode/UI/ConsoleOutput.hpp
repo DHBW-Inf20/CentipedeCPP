@@ -2,14 +2,16 @@
 #define CONSOLEOUTPUT_HPP
 #include <iostream>
 #include "../../lib/console_lib.hpp"
-#include "ITheme.hpp"
+#include "../Common/CentipedeSettings.hpp"
+#include "../Common/ITheme.hpp"
+#include "../Common/IUI.hpp"
 #include "../GameObjects/SaveState.hpp"
 #include "../GameObjects/MushroomMap.hpp"
 #include "../GameObjects/CentipedeHead.hpp"
 #include "../GameObjects/Bullet.hpp"
 #include "../GameObjects/Starship.hpp"
 
-class ConsoleOutput
+class ConsoleOutput : public IUI
 {
 	private:
 		/**
@@ -24,7 +26,7 @@ class ConsoleOutput
 			// Prepare colours
 			std::cout << theme.getColourSetupStart();
 			// Output frame of game
-			std::cout << frame;
+			std::cout << *frame;
 			// End colours
 			std::cout << theme.getColourSetupEnd();
 		}
@@ -78,6 +80,8 @@ class ConsoleOutput
 			}
 			output += theme.getFieldEdgeBottomRightCorner();
 			output += newLine;
+
+			return std::make_shared<std::string>(output);
 		}
 
 		/**

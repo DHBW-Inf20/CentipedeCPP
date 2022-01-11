@@ -17,10 +17,12 @@ class CentipedeHead : public CentipedePart
 				case CentipedeMovingDirection::cLeft:
 					{
 						this->movingDirection = CentipedeMovingDirection::cRight;
+						return;
 					}
 				case CentipedeMovingDirection::cRight:
 					{
 						this->movingDirection = CentipedeMovingDirection::cLeft;
+						return;
 					}
 			}
 		}
@@ -43,7 +45,7 @@ class CentipedeHead : public CentipedePart
 		{
 			if(mushroomMap.getMushroom(line, column) != 0)
 			{
-				// If position out of bounds (returns -1) or there is a mushroom (returns value > 0).
+				// If position out of bounds (returns -1) or there is a mushroom (returns value > 0).s
 				return false;
 			}
 			// Is possible position for a centipede to be -> check others.
@@ -106,24 +108,41 @@ class CentipedeHead : public CentipedePart
 		{
 			int line = this->position.getLine();
 			int column = this->position.getColumn();
+			Position savedPosition(this->position);
+			CentipedeMovingDirection savedMovingDirection(this->movingDirection);
 
+			bool moved;
+			// Try moving
 			switch (this->movingDirection)
 			{
 				case CentipedeMovingDirection::cLeft:
 					if (isValidPosition(line, column - 1, mushroomMap, centipedeList))
 					{
-						return this->position.left(); // always true;
+						moved = this->position.left(); // always true;
 					}
-					// way is blocked
-					return this->changeLane(centipedeList, settings_ptr);
+					else // way is blocked
+					{
+						moved = this->changeLane(centipedeList, settings_ptr);
+					}
+					break;
 				case CentipedeMovingDirection::cRight:
 					if (isValidPosition(line, column + 1, mushroomMap, centipedeList))
 					{
-						return this->position.right(); // always true;
+						moved = this->position.right(); // always true;
+					} 
+					else // way is blocked
+					{
+						moved = this->changeLane(centipedeList, settings_ptr);
 					}
-					// way is blocked
-					return this->changeLane(centipedeList, settings_ptr);
+					break;
 			}
+
+			// Pull tail if moved.
+			if(moved && this->tail_ptr != nullptr){
+				std::reinterpret_pointer_cast<CentipedeBody>(this->tail_ptr)->move(savedPosition, savedMovingDirection);
+			}
+
+			return moved;
 		}
 };
 

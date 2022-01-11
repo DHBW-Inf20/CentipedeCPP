@@ -1,3 +1,6 @@
+#ifndef SAFE_STATE_HPP
+#define SAFE_STATE_HPP
+
 #include <memory>
 #include <vector>
 #include "../Common/CentipedeSettings.hpp"
@@ -92,8 +95,10 @@ class SaveState
 			return this->currentRound;
 		}
 
-		int incrementCurrentRound()
+		void incrementCurrentRound()
 		{
 			this->currentRound++;
 		}
 };
+
+#endif

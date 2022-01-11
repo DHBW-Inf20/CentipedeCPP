@@ -8,24 +8,15 @@
 class Bullet
 {
     private:
-        std::unique_ptr<Position> position;
+        Position position;
     
     public:
         /**
          * Creates a Bullet in the specified position.
          */
         Bullet(int line, int column, std::shared_ptr<CentipedeSettings> settings_ptr)
+            : position(line, column, settings_ptr)
         {
-            this->position = std::make_unique<Position>(line, column, settings_ptr);
-        }
-
-        /**
-         * Own copy constructer for looping over lists (for(auto bullet : bullets)).
-         * Probably not available by default because of unique_ptr.
-         */
-        Bullet(Bullet &bullet)
-        {
-            this->position = std::make_unique<Position>(bullet.getPosition());
         }
 
         /**
@@ -33,7 +24,7 @@ class Bullet
          */
         Position getPosition()
         {
-            return *(this->position);
+            return this->position;
         }
 
         /**
@@ -43,7 +34,7 @@ class Bullet
          */
         bool move()
         {
-            return this->position->up();
+            return this->position.up();
         }
 };
 

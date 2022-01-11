@@ -17,6 +17,12 @@ public:
 	 */
 	void move(Position position, CentipedeMovingDirection direction)
 	{
+		// Pull tail
+		if(this->tail_ptr != nullptr)
+		{
+			std::reinterpret_pointer_cast<CentipedeBody>(this->tail_ptr)->move(this->position, this->movingDirection);
+		}
+		// Then move to new position
 		this->position = position;
 		this->movingDirection = direction;
 	}

@@ -1,4 +1,4 @@
-#include "ITheme.hpp"
+#include "../Common/ITheme.hpp"
 #include "../../lib/console_lib.hpp"
 
 class StandardTheme
@@ -68,7 +68,7 @@ class StandardTheme
 
         std::string getBullet() override
         {
-            return "・";
+            return "▵";
         }
 
         std::string getFieldEdgeTop() override

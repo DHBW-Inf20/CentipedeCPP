@@ -4,6 +4,7 @@
 #include "../Common/Directions.hpp"
 #include "Position.hpp"
 #include "Bullet.hpp"
+#include "MushroomMap.hpp"
 #include <memory>
 
 class Starship
