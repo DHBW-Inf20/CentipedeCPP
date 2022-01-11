@@ -371,15 +371,13 @@ class GameLogic
                                       std::shared_ptr<MushroomMap> mushroomMap_ptr)
         {
             auto centipede_ptr = centipedes_ptr->begin();
-            while(centipede_ptr != centipedes_ptr->end())
+            while(centipede_ptr < centipedes_ptr->end())
             {
                 // Indicator wheather the head was hit.
                 bool headHit = false;
                 // Check bullets.
                 // No simple "for" loop because vector may be edited while looping through.
                 auto bullet_ptr = bullets_ptr->begin();
-                // TODO RE WHY is that needed?
-                if(bullet_ptr == bullets_ptr->end()) break;
                 while(bullet_ptr != bullets_ptr->end())
                 {
                     auto collisionResult = centipede_ptr->collide(*bullet_ptr, mushroomMap_ptr);
@@ -388,7 +386,7 @@ class GameLogic
                     if(hitIndicator == CentipedeHit::noHit)
                     {
                         // Nothing left to do, just continue checking the others.
-                        bullet_ptr++;
+                        ++bullet_ptr;
                         continue;
                     }
 
@@ -399,7 +397,10 @@ class GameLogic
                     {
                         auto splitOfBody_ptr = std::reinterpret_pointer_cast<CentipedeBody>(splitOfTail_ptr);
                         CentipedeHead newCentipedeFromSplitOfTail(splitOfBody_ptr);
+                        // Need to recreate the iterator after adding a new centipede.
+                        auto diff = centipede_ptr - centipedes_ptr->begin();
                         centipedes_ptr->push_back(newCentipedeFromSplitOfTail);
+                        centipede_ptr = centipedes_ptr->begin() + diff;
                     }
 
                     if(hitIndicator == CentipedeHit::tailHit)
@@ -422,7 +423,7 @@ class GameLogic
                 }
 
                 // No hit or only tail hit -> continue regulary.
-                centipede_ptr++;
+                ++centipede_ptr;
             }
         }
 
