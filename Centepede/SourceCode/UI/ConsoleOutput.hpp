@@ -17,7 +17,7 @@ class ConsoleOutput : public IUI
 		/**
 		 * Frames the given image
 		 */
-		void writeToConsole(std::shared_ptr<std::string> frame, ITheme &theme)
+		void writeToConsole(std::string &image, ITheme &theme)
 		{
 			AnsiExcapeCodes ansiExcapeCodes;
 
@@ -26,7 +26,7 @@ class ConsoleOutput : public IUI
 			// Prepare colours
 			std::cout << theme.getColourSetupStart();
 			// Output frame of game
-			std::cout << *frame;
+			std::cout << image;
 			// End colours
 			std::cout << theme.getColourSetupEnd();
 		}
@@ -46,8 +46,102 @@ class ConsoleOutput : public IUI
 			return fillingSpaces;
 		}
 
+		/**
+		 * Prints a text on the output. 
+		 * If it is too wide, it cuts hard at max width and continues in a new line until the entire text is printed.
+		 */
+		std::string getTextLineWithWrapping(int leftPadding, 
+											int rightPadding, 
+											int numberOfColumns, 
+											std::string &text, 
+											std::string &newLine,
+											ITheme &theme)
+		{
+			int maxTextWidth = numberOfColumns + 2 - leftPadding - rightPadding;
+			std::string output;
+			while(text.size() > maxTextWidth)
+			{
+				output += theme.getWhiteSpace() + text.substr(0, maxTextWidth) + theme.getWhiteSpace() + newLine;
+				text = text.substr(maxTextWidth);
+			}
+			output += theme.getWhiteSpace() + text + this->getFillingSpaces(numberOfColumns, text.size() + 1, theme) + newLine;
+			return output;
+		}
+
+		std::string decorateText(std::string &text, ConsoleTextDecoration decoration, ITheme &theme)
+		{
+			AnsiExcapeCodes ansiExcapeCodes;
+			switch (decoration)
+			{
+				case ConsoleTextDecoration::Bold:
+					return ansiExcapeCodes.boldOn + text + ansiExcapeCodes.boldOff;
+				case ConsoleTextDecoration::Italics:
+					return ansiExcapeCodes.italicsOn + text + ansiExcapeCodes.italicsOff;
+				case ConsoleTextDecoration::Strikethrough:
+					return ansiExcapeCodes.strikethroughOn + text + ansiExcapeCodes.strikethroughOff;
+				case ConsoleTextDecoration::Underlined:
+					return ansiExcapeCodes.underlineOn + text + ansiExcapeCodes.underlineOff;
+				default:
+					return text;
+			}
+		}
+
+		std::string colourText(std::string &text, ConsoleColour colour, ITheme &theme, bool background = false)
+		{
+			AnsiExcapeCodes ansiExcapeCodes;
+			if(background)
+			{
+				switch (colour)
+				{
+					case ConsoleColour::Black:
+						return ansiExcapeCodes.backgroundBlack + text + theme.getColourSetupStart();
+					case ConsoleColour::Blue:
+						return ansiExcapeCodes.backgroundBlue + text + theme.getColourSetupStart();
+					case ConsoleColour::Cyan:
+						return ansiExcapeCodes.backgroundCyan + text + theme.getColourSetupStart();
+					case ConsoleColour::Default:
+						return ansiExcapeCodes.backgroundDefault + text + theme.getColourSetupStart();
+					case ConsoleColour::Green:
+						return ansiExcapeCodes.backgroundGreen + text + theme.getColourSetupStart();
+					case ConsoleColour::Magenta:
+						return ansiExcapeCodes.backgroundMagenta + text + theme.getColourSetupStart();
+					case ConsoleColour::Red:
+						return ansiExcapeCodes.backgroundRed + text + theme.getColourSetupStart();
+					case ConsoleColour::White:
+						return ansiExcapeCodes.backgroundWhite + text + theme.getColourSetupStart();
+					case ConsoleColour::Yellow:
+						return ansiExcapeCodes.backgroundYellow + text + theme.getColourSetupStart();
+					default:
+						return text;
+				}
+			}
+			switch (colour)
+			{
+				case ConsoleColour::Black:
+					return ansiExcapeCodes.foregroundBlack + text + theme.getColourSetupStart();
+				case ConsoleColour::Blue:
+					return ansiExcapeCodes.foregroundBlue + text + theme.getColourSetupStart();
+				case ConsoleColour::Cyan:
+					return ansiExcapeCodes.foregroundCyan + text + theme.getColourSetupStart();
+				case ConsoleColour::Default:
+					return ansiExcapeCodes.foregroundDefault + text + theme.getColourSetupStart();
+				case ConsoleColour::Green:
+					return ansiExcapeCodes.foregroundGreen + text + theme.getColourSetupStart();
+				case ConsoleColour::Magenta:
+					return ansiExcapeCodes.foregroundMagenta + text + theme.getColourSetupStart();
+				case ConsoleColour::Red:
+					return ansiExcapeCodes.foregroundRed + text + theme.getColourSetupStart();
+				case ConsoleColour::White:
+					return ansiExcapeCodes.foregroundWhite + text + theme.getColourSetupStart();
+				case ConsoleColour::Yellow:
+					return ansiExcapeCodes.foregroundYellow + text + theme.getColourSetupStart();
+				default:
+					return text;
+			}
+		}
+
         // //////////////////////////////////////////////////
-        // Image rendering
+        // In Game Image rendering
         // //////////////////////////////////////////////////
 
 		/**
@@ -68,7 +162,7 @@ class ConsoleOutput : public IUI
 			output += roundText + ansiExcapeCodes.boldOff + newLine;
 
 			// Second line with hearts.
-			output += " "; // Indent to match the inner Playing-Field.
+			output += theme.getWhiteSpace(); // Indent to match the inner Playing-Field.
 			for(int i = 0; i < lives; i++) output += theme.getHeart();
 			output += getFillingSpaces(numberOfColumns, lives + 1, theme) + newLine;
 
@@ -200,7 +294,10 @@ class ConsoleOutput : public IUI
 		}
 
 	public:
-		void drawImage(int round, int lives, int score, ITheme& theme, SaveState& state, CentipedeSettings &settings)
+		/**
+		 * Displays the image that reflects the current saveState.
+		 */
+		void displayImage(SaveState& state, CentipedeSettings &settings, ITheme& theme) override
 		{
 			// initialize canvas
 			auto canvas = std::make_shared<std::vector<std::vector<std::string>>>(settings.getPlayingFieldHeight());
@@ -212,10 +309,78 @@ class ConsoleOutput : public IUI
 
 			// render image.
 			this->renderGameObjects(canvas, state, theme);
-			auto frame = this->renderFrame(round, lives, score, canvas, theme);
+			auto frame = this->renderFrame(state.getCurrentRound(), state.getLives(), state.getScore(), canvas, theme);
 
 			// output 
-			this->writeToConsole(frame, theme);
+			this->writeToConsole(*frame, theme);
+		}
+
+		/**
+		 * Displays a menu of options.
+		 */
+		void displayMenu(std::string &title, 
+						 ConsoleColour titleColour, 
+						 std::vector<std::string> &options, 
+						 int selected, 
+						 ITheme &theme, 
+						 CentipedeSettings &settings) override
+		{
+			// Preparations
+			std::string output = "";
+			std::string newLine = "\r\n";
+			auto numberOfColumns = settings.getPlayingFieldWidth();
+			auto numberOfLines = settings.getPlayingFieldHeight();
+			auto blankLine = this->getFillingSpaces(numberOfColumns, 0, theme) + newLine;
+			// Blank left and right for nicer image.
+			int leftPadding = 1;
+			int rightPadding = 1;
+			int maxTextWidth = numberOfColumns + 2 - leftPadding - rightPadding;
+			// Two info Lanes at Top and border around game
+			auto totalLines = numberOfLines + 2 + 2;
+			int lineCount = 0;
+
+			// Two blank lines on top.
+			output += blankLine;
+			output += blankLine;
+			lineCount += 2;
+
+			// Title.
+			lineCount += title.size() / maxTextWidth;
+			if(title.size() % maxTextWidth)
+			{
+				lineCount++;
+			}
+			title = this->getTextLineWithWrapping(1, 1, numberOfColumns, title, newLine, theme);
+			title = this->colourText(title, titleColour, theme);
+			title = this->decorateText(title, ConsoleTextDecoration::Bold, theme);
+			output += title;
+			output += blankLine;
+			lineCount++;
+
+			for(int i = 0; i < options.size(); i++)
+			{
+				auto option = options[i];
+				lineCount += option.size() / maxTextWidth;
+				if(option.size() % maxTextWidth)
+				{
+					lineCount++;
+				}
+				option = this->getTextLineWithWrapping(1, 1, maxTextWidth, option, newLine, theme);
+				if(i == selected)
+				{
+					option = this->decorateText(option, ConsoleTextDecoration::Bold, theme);
+				}
+				output += option;
+			}
+
+			while(lineCount < totalLines)
+			{
+				// Fill up with blank lines
+				output += blankLine;
+				lineCount++;
+			}
+
+			this->writeToConsole(output, theme);
 		}
 };
 

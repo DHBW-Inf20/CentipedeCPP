@@ -33,6 +33,7 @@ class GameLogic
         std::unique_ptr<std::thread> gameClock_thread_ptr;
         std::shared_ptr<IUI> ui_ptr;
         std::shared_ptr<ITheme> theme_ptr;
+        bool hasDiedInRound;
 
         // //////////////////////////////////////////////////
         // Additional Methods
@@ -67,10 +68,18 @@ class GameLogic
                     this->handleGlobalCollisions(saveState_ptr);
 
                     // Print the current state to the UI.
-                    this->printGame(saveState_ptr->getCurrentRound(), saveState_ptr->getLives(), saveState_ptr->getScore(), saveState_ptr, settings_ptr);
+                    this->printGame(saveState_ptr, settings_ptr);
                 }
 
-                this->addToScore(ScoreType::roundEnd);
+                if(!this->hasDiedInRound)
+                {
+                    this->addToScore(ScoreType::roundEnd);
+                }
+            }
+
+            if(this->saveState_ptr->getLives() <= 0)
+            {
+                this->loseGame();
             }
 
             this->waitForGameClock();
@@ -139,9 +148,14 @@ class GameLogic
 
         /**
          * Threadsafe check, wheather the game should continue running.
+         * Also returns false if the player has no lives left.
          */
         bool isRunning()
         {
+            if(this->saveState_ptr->getLives() <= 0)
+            {
+                return false;
+            }
             std::shared_lock runningLock(this->runningMutex);
             return this->gameRunning;
         }
@@ -158,9 +172,9 @@ class GameLogic
         /**
          * Prints the safeState to the UI.
          */
-        void printGame(int round, int lives, int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
+        void printGame(std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
         {
-            this->ui_ptr->drawImage(round, lives, score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
+            this->ui_ptr->displayImage(*saveState_ptr, *settings_ptr, *(this->theme_ptr));
         }
 
         /**
@@ -494,29 +508,31 @@ class GameLogic
             }
         }
 
+        /**
+         * Decreases player health by 1, kills all centipedes and lets the round end without getting points.
+         */
         void loseLive()
         {
             // Decrease health.
             this->saveState_ptr->loseLive();
+            // This makes shure that no points for the round end are gained.
+            this->hasDiedInRound = true;
             // Remove all enemies.
             this->saveState_ptr->getCentipedes()->clear();
             // Delay.
             auto delayLength = this->saveState_ptr->getSettings()->getLiveLostBreakTime();
             std::this_thread::sleep_for(std::chrono::milliseconds(delayLength));
-
-            // Finish action.
-            if(this->saveState_ptr->getLives() > 0)
-            {
-                return;
-            }
-            // No lives left.
-            loseGame();
         }
 
+        /**
+         * Displays the Game Over screen.
+         */
         void loseGame()
         {
-            std::unique_lock(this->runningMutex);
-            this->gameRunning = false;
+            std::string title = "Game Over";
+            std::vector<std::string> text;
+            text.push_back("Your score was " + std::to_string(this->saveState_ptr->getScore()));
+            this->ui_ptr->displayMenu(title, ConsoleColour::Red, text, -1, *(this->theme_ptr), *(this->saveState_ptr->getSettings()));
         }
 
     public:
