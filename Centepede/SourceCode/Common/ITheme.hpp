@@ -13,6 +13,7 @@ class ITheme
         virtual std::string getMushroom(int health) = 0;
         virtual std::string getStarship() = 0;
         virtual std::string getBullet() = 0;
+        virtual std::string getHeart() = 0;
         virtual std::string getFieldEdgeTop() = 0;
         virtual std::string getFieldEdgeLeft() = 0;
         virtual std::string getFieldEdgeBottom() = 0;

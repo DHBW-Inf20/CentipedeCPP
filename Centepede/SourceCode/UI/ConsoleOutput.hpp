@@ -31,6 +31,20 @@ class ConsoleOutput : public IUI
 			std::cout << theme.getColourSetupEnd();
 		}
 
+		/**
+		 * Returns a string consisting of the exact number of white-spaces to fill the line.
+		 */
+		std::string getFillingSpaces(int numberOfColumns, int takenSpace, ITheme &theme)
+		{
+			std::string fillingSpaces = "";
+			// "+ 2" is necessary because of the border around the game.
+			int numberOfSpaces = (numberOfColumns + 2) - takenSpace;
+			for(int i = 0; i < numberOfSpaces; i++)
+			{
+				fillingSpaces += theme.getWhiteSpace();
+			}
+			return fillingSpaces;
+		}
 
         // //////////////////////////////////////////////////
         // Image rendering
@@ -39,7 +53,7 @@ class ConsoleOutput : public IUI
 		/**
 		 * Renders a border and the score around a given image of GameObjects. Returns the result as single string.
 		 */
-		std::shared_ptr<std::string> renderFrame(int round, int score, std::shared_ptr<std::vector<std::vector<std::string>>> image, ITheme &theme)
+		std::shared_ptr<std::string> renderFrame(int round, int lives, int score, std::shared_ptr<std::vector<std::vector<std::string>>> image, ITheme &theme)
 		{
 			AnsiExcapeCodes ansiExcapeCodes;
 			std::string newLine = "\r\n";
@@ -49,14 +63,14 @@ class ConsoleOutput : public IUI
 			// Top line with score and round.
 			std::string scoreText = "Score: " + std::to_string(score);
 			std::string roundText = "Round: " + std::to_string(round);
-			// "+ 2" is necessary because of the border around the game.
-			int numberOfSpaces = (numberOfColumns + 2) - (scoreText.size() + roundText.size());
 			output += ansiExcapeCodes.boldOn + scoreText;
-			for(int i = 0; i < numberOfSpaces; i++)
-			{
-				output += theme.getWhiteSpace();
-			}
+			output += getFillingSpaces(numberOfColumns, scoreText.size() + roundText.size(), theme);
 			output += roundText + ansiExcapeCodes.boldOff + newLine;
+
+			// Second line with hearts.
+			output += " "; // Indent to match the inner Playing-Field.
+			for(int i = 0; i < lives; i++) output += theme.getHeart();
+			output += getFillingSpaces(numberOfColumns, lives + 1, theme) + newLine;
 
 
 			// Upper field edge:
@@ -186,7 +200,7 @@ class ConsoleOutput : public IUI
 		}
 
 	public:
-		void drawImage(int round, int score, ITheme& theme, SaveState& state, CentipedeSettings &settings)
+		void drawImage(int round, int lives, int score, ITheme& theme, SaveState& state, CentipedeSettings &settings)
 		{
 			// initialize canvas
 			auto canvas = std::make_shared<std::vector<std::vector<std::string>>>(settings.getPlayingFieldHeight());
@@ -198,7 +212,7 @@ class ConsoleOutput : public IUI
 
 			// render image.
 			this->renderGameObjects(canvas, state, theme);
-			auto frame = this->renderFrame(round, score, canvas, theme);
+			auto frame = this->renderFrame(round, lives, score, canvas, theme);
 
 			// output 
 			this->writeToConsole(frame, theme);

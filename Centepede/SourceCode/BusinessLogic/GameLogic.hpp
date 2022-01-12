@@ -67,7 +67,7 @@ class GameLogic
 
                     // Print the current state to the UI.
                     // TODO RE score.
-                    this->printGame(saveState_ptr->getCurrentRound(), saveState_ptr->getScore(), saveState_ptr, settings_ptr);
+                    this->printGame(saveState_ptr->getCurrentRound(), saveState_ptr->getLives(), saveState_ptr->getScore(), saveState_ptr, settings_ptr);
                 }
 
                 this->addToScore(ScoreType::roundEnd);
@@ -158,9 +158,10 @@ class GameLogic
         /**
          * Prints the safeState to the UI.
          */
-        void printGame(int round, int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
+        void printGame(int round, int lives, int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
         {
-            this->ui_ptr->drawImage(round, score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
+            // TODO RE lives.
+            this->ui_ptr->drawImage(round, lives, score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
         }
 
         /**
@@ -485,8 +486,27 @@ class GameLogic
                 }
 
                 // Collision player & centipede -> lose game.
-                this->loseGame();
+                this->loseLive();
             }
+        }
+
+        void loseLive()
+        {
+            // Decrease health.
+            this->saveState_ptr->loseLive();
+            // Remove all enemies.
+            this->saveState_ptr->getCentipedes()->clear();
+            // Delay.
+            auto delayLength = this->saveState_ptr->getSettings()->getLiveLostBreakTime();
+            std::this_thread::sleep_for(std::chrono::milliseconds(delayLength));
+
+            // Finish action.
+            if(this->saveState_ptr->getLives() > 0)
+            {
+                return;
+            }
+            // No lives left.
+            loseGame();
         }
 
         void loseGame()
@@ -527,6 +547,7 @@ class GameLogic
 			int currentCentipedeModuloGametickSlowdown = settings_ptr->getInitialCentipedeModuloGametickSlowdown();
             int currentRound = 0;
             int score = 0;
+            int lives = settings_ptr->getInitialPlayerHealth();
             auto newState = std::make_shared<SaveState>(settings_ptr, 
                                                         bullets_ptr,
                                                         starship_ptr,
@@ -534,7 +555,8 @@ class GameLogic
                                                         centipedes_ptr,
                                                         currentCentipedeModuloGametickSlowdown,
                                                         currentRound,
-                                                        score);
+                                                        score,
+                                                        lives);
             this->continueGame(newState);
         }
 

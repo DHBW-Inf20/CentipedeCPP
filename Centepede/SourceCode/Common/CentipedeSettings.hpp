@@ -7,6 +7,7 @@ class CentipedeSettings
         int playingFieldHeight;
         int playingFieldWidth;
 
+        int initialPlayerHealth;
         int initialMushroomHealth;
         int initialStarshipLine;
         int initialStarshipColumn;
@@ -26,6 +27,7 @@ class CentipedeSettings
         int initialCentipedeModuloGametickSlowdown;
         int centipedeSpeedIncrementAmount;
         int centipedeSpeedIncrementRoundModuloSlowdown;
+        int liveLostBreakTime;
     
     public:
         CentipedeSettings();
@@ -39,6 +41,10 @@ class CentipedeSettings
             return this->playingFieldWidth;
         }
         
+        int getInitialPlayerHealth()
+        {
+            return this->initialPlayerHealth;
+        }
         int getInitialMushroomHealth()
         {
             return this->initialMushroomHealth;
@@ -105,6 +111,10 @@ class CentipedeSettings
         int getCentipedeSpeedIncrementRoundModuloSlowdown()
         {
             return this->centipedeSpeedIncrementRoundModuloSlowdown;
+        }
+        int getLiveLostBreakTime()
+        {
+            return this->liveLostBreakTime;
         }
 };
 

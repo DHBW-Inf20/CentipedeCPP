@@ -71,6 +71,11 @@ class StandardTheme
             return "▵";
         }
 
+        std::string getHeart() override
+        {
+            return "❤︎";
+        }
+
         std::string getFieldEdgeTop() override
         {
             return "◼︎";

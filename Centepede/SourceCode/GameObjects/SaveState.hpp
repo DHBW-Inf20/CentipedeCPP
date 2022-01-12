@@ -21,6 +21,7 @@ class SaveState
         int currentCentipedeModuloGametickSlowdown;
 		int currentRound;
 		int score;
+		int lives;
 
 	public:
 		SaveState(std::shared_ptr<CentipedeSettings> settings_ptr,
@@ -30,7 +31,8 @@ class SaveState
 			std::shared_ptr<std::vector<CentipedeHead>> centipedes_ptr,
 			int currentCentipedeModuloGametickSlowdown,
 			int currentRound,
-			int score)
+			int score,
+			int lives)
 		{
 			this->gameTick = 0;
 			this->settings_ptr = settings_ptr;
@@ -41,6 +43,7 @@ class SaveState
 			this->currentCentipedeModuloGametickSlowdown = currentCentipedeModuloGametickSlowdown;
 			this->currentRound = currentRound;
 			this->score = score;
+			this->lives = lives;
 		}
 
 		std::shared_ptr<CentipedeSettings> getSettings()
@@ -111,6 +114,16 @@ class SaveState
 		int getScore()
 		{
 			return this->score;
+		}
+
+		int getLives()
+		{
+			return this->lives;
+		}
+
+		void loseLive()
+		{
+			this->lives--;
 		}
 };
 

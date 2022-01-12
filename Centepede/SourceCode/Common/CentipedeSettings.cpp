@@ -5,6 +5,7 @@ CentipedeSettings::CentipedeSettings()
     this->playingFieldHeight = 28;
     this->playingFieldWidth = 29;
 
+    this->initialPlayerHealth = 3;
     this->initialMushroomHealth = 3;
     this->initialStarshipLine = 27;
     this->initialStarshipColumn = 14;
@@ -24,4 +25,5 @@ CentipedeSettings::CentipedeSettings()
     this->initialCentipedeModuloGametickSlowdown = 8;
     this->centipedeSpeedIncrementAmount = 1;
     this->centipedeSpeedIncrementRoundModuloSlowdown = 5;
+    this->liveLostBreakTime = 500;
 }
