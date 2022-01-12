@@ -7,7 +7,9 @@ CentipedeSettings::CentipedeSettings()
 
     this->initialPlayerHealth = 3;
     this->initialMushroomHealth = 3;
-    this->initialStarshipLine = 27;
+    this->initialMushroomSpawnChanceDividend = 1;
+    this->initialMushroomSpawnChanceDivisor = 20;
+    this->initialStarshipLine = 23;
     this->initialStarshipColumn = 14;
     this->centipedeSpawnLine = 0;
     this->centipedeSpawnColumn = 14;

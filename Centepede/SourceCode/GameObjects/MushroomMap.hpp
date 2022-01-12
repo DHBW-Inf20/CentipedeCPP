@@ -1,6 +1,7 @@
 #ifndef MUSHROOM_MAP_HPP
 #define MUSHROOM_MAP_HPP
 #include "Bullet.hpp"
+#include "../../lib/CppRandom.hpp"
 #include "../Common/CentipedeSettings.hpp"
 #include "../Common/Utils.hpp"
 #include <vector>
@@ -20,12 +21,43 @@ class MushroomMap
         std::vector<std::vector<int8_t>> mushroomMap;
         std::shared_ptr<CentipedeSettings> settings_ptr;
 
+        bool isOutOfBounds(int line, int column)
+        {
+            return lineOutOfBounds(line, this->settings_ptr)
+                || columnOutOfBounds(column, this->settings_ptr);
+        }
+
+        /**
+         * Spawns random mushrooms above the initial starship position.
+         */
+        void spawnRandomMushrooms()
+        {
+            auto dividend = this->settings_ptr->getInitialMushroomSpawnChanceDividend();
+            auto divisor = this->settings_ptr->getInitialMushroomSpawnChanceDivisor();
+            auto starshipSpawnLine = this->settings_ptr->getInitialStarshipLine();
+
+            for(int line = 0; line < starshipSpawnLine; line++)
+            {
+                for(int column = 0; column < this->settings_ptr->getPlayingFieldWidth(); column++)
+                {
+                    auto spawnMushroom = rollRandomWithChance(dividend, divisor);
+                    if(spawnMushroom)
+                    {
+                        this->spawnMushroom(line, column);
+                        auto initialDamage = GetRandomNumberBetween(0, this->settings_ptr->getInitialMushroomHealth() - 1);
+                        this->mushroomMap[line][column] -= initialDamage;
+                    }
+                }
+            }
+        }
+
     public:
         /**
          * Initialized map in fieldsize.
          */
         MushroomMap(std::shared_ptr<CentipedeSettings> settings_ptr)
         {
+            // Initialize two dimensional array.
             // first make a line with n columns.
             std::vector<int8_t> line;
             for(int j = 0; j < settings_ptr->getPlayingFieldWidth(); j++){
@@ -39,6 +71,7 @@ class MushroomMap
             }
 
             this->settings_ptr = settings_ptr;
+            this->spawnRandomMushrooms();
         }
 
         /**
@@ -47,7 +80,7 @@ class MushroomMap
          */
         int getMushroom(int line, int column)
         {
-            if(isOutOfBoundsOrAtCentipedeEntry(line, column))
+            if(this->isOutOfBounds(line, column))
             {
                 return -1;
             }
@@ -59,19 +92,11 @@ class MushroomMap
          */
         void spawnMushroom(int line, int column)
         {
-            if(isOutOfBoundsOrAtCentipedeEntry(line, column))
+            if(isOutOfBounds(line, column))
             {
                 return;
             }
             this->mushroomMap[line][column] = this->settings_ptr->getInitialMushroomHealth();
-        }
-
-        // Methode hinzugef�gt
-        bool isOutOfBoundsOrAtCentipedeEntry(int line, int column)
-        {
-            return lineOutOfBounds(line, this->settings_ptr)
-                || columnOutOfBounds(column, this->settings_ptr)
-                || (line == 0 && column == (this->settings_ptr->getPlayingFieldWidth() - 1) / 2);
         }
 
         /**

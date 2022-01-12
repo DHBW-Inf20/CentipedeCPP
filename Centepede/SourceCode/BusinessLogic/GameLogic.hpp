@@ -7,6 +7,7 @@
 #include "../Common/Tuple.hpp"
 #include "../Common/IUI.hpp"
 #include "../Common/ITheme.hpp"
+#include "../Common/Utils.hpp"
 #include "../../lib/concurrency_lib.hpp"
 #include <memory>
 #include <mutex>
@@ -66,7 +67,6 @@ class GameLogic
                     this->handleGlobalCollisions(saveState_ptr);
 
                     // Print the current state to the UI.
-                    // TODO RE score.
                     this->printGame(saveState_ptr->getCurrentRound(), saveState_ptr->getLives(), saveState_ptr->getScore(), saveState_ptr, settings_ptr);
                 }
 
@@ -160,7 +160,6 @@ class GameLogic
          */
         void printGame(int round, int lives, int score, std::shared_ptr<SaveState> saveState_ptr, std::shared_ptr<CentipedeSettings> settings_ptr)
         {
-            // TODO RE lives.
             this->ui_ptr->drawImage(round, lives, score, *(this->theme_ptr), *saveState_ptr, *settings_ptr);
         }
 
@@ -296,8 +295,13 @@ class GameLogic
 
         CentipedeMovingDirection getRandomCentipedeMovingDirection()
         {
-            // TODO RE
-            return CentipedeMovingDirection::cLeft;
+            auto goLeft = rollRandomWithChance(1,2);
+            if(goLeft) 
+            {
+                return CentipedeMovingDirection::cLeft;
+            }
+            // go right.
+            return CentipedeMovingDirection::cRight;
         }
 
         // //////////////////////////////////////////////////

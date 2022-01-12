@@ -9,6 +9,10 @@ class CentipedeSettings
 
         int initialPlayerHealth;
         int initialMushroomHealth;
+        // The dividend of the spawn chance per field: dividend/divisor 
+        int initialMushroomSpawnChanceDividend;
+        // The divisor of the spawn chance per field: dividend/divisor 
+        int initialMushroomSpawnChanceDivisor;
         int initialStarshipLine;
         int initialStarshipColumn;
         int centipedeSpawnLine;
@@ -48,6 +52,14 @@ class CentipedeSettings
         int getInitialMushroomHealth()
         {
             return this->initialMushroomHealth;
+        }
+        int getInitialMushroomSpawnChanceDividend()
+        {
+            return this->initialMushroomSpawnChanceDividend;
+        }
+        int getInitialMushroomSpawnChanceDivisor()
+        {
+            return this->initialMushroomSpawnChanceDivisor;
         }
         int getInitialStarshipLine()
         {
