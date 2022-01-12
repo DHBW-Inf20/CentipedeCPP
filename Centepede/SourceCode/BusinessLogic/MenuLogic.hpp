@@ -1,6 +1,7 @@
 #ifndef MENU_LOGIC_HPP
 #define MENU_LOGIC_HPP
 #include <memory>
+#include <functional>
 #include "../Common/IUI.hpp"
 #include "../Common/ITheme.hpp"
 #include "../Common/Directions.hpp"
