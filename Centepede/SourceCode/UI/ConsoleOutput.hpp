@@ -320,6 +320,7 @@ class ConsoleOutput : public IUI
 		 */
 		void displayMenu(std::string &title, 
 						 ConsoleColour titleColour, 
+						 std::vector<std::string> &textLines,
 						 std::vector<std::string> &options, 
 						 int selected, 
 						 ITheme &theme, 
@@ -350,12 +351,24 @@ class ConsoleOutput : public IUI
 			{
 				lineCount++;
 			}
-			title = this->getTextLineWithWrapping(1, 1, numberOfColumns, title, newLine, theme);
-			title = this->colourText(title, titleColour, theme);
-			title = this->decorateText(title, ConsoleTextDecoration::Bold, theme);
-			output += title;
+			auto titleLine = this->getTextLineWithWrapping(1, 1, numberOfColumns, title, newLine, theme);
+			titleLine = this->colourText(titleLine, titleColour, theme);
+			titleLine = this->decorateText(titleLine, ConsoleTextDecoration::Bold, theme);
+			output += titleLine;
 			output += blankLine;
 			lineCount++;
+
+			for(int i = 0; i < textLines.size(); i++)
+			{
+				auto line = textLines[i];
+				lineCount += line.size() / maxTextWidth;
+				if(line.size() % maxTextWidth)
+				{
+					lineCount++;
+				}
+				line = this->getTextLineWithWrapping(1, 1, maxTextWidth, line, newLine, theme);
+				output += line;
+			}
 
 			for(int i = 0; i < options.size(); i++)
 			{

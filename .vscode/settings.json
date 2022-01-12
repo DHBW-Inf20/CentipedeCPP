@@ -71,6 +71,7 @@
         "utility": "cpp",
         "vector": "cpp",
         "future": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "numeric": "cpp"
     }
 }

@@ -1,5 +1,6 @@
 #ifndef GAME_LOGIC_HPP
 #define GAME_LOGIC_HPP
+#include "MenuLogic.hpp"
 #include "../Input/Keylistener.hpp"
 #include "../Input/IInputBufferReader.hpp"
 #include "../GameObjects/SaveState.hpp"
@@ -26,8 +27,7 @@ enum ScoreType : int
 class GameLogic
 {
     private:
-        bool gameRunning;
-        std::shared_mutex runningMutex;
+        std::shared_ptr<MenuLogic> menuLogic_ptr;
         std::shared_ptr<IInputBufferReader> inputBuffer_ptr;
         std::shared_ptr<SaveState> saveState_ptr;
         std::unique_ptr<std::thread> gameClock_thread_ptr;
@@ -50,13 +50,13 @@ class GameLogic
             auto settings_ptr = saveState_ptr->getSettings();
             auto gameClock = startGameClock(settings_ptr->getGameTickLength());
             // Outer game loop.
-            while(this->isRunning())
+            while(this->alive())
             {
                 // Start a new Round
                 this->startNextRound(saveState_ptr);
 
                 // Play through the round
-                while(this->isRunning() && this->continueRound(saveState_ptr->getCentipedes()))
+                while(this->alive() && this->continueRound(saveState_ptr->getCentipedes()))
                 {
                     saveState_ptr->incrementGameTick();
                     // Await next game tick.
@@ -69,11 +69,20 @@ class GameLogic
 
                     // Print the current state to the UI.
                     this->printGame(saveState_ptr, settings_ptr);
+
+                    // Break the game if necessary.
+                    this->breakGameIfNecessary(inputBuffer_ptr, gameClock);
                 }
 
                 if(!this->hasDiedInRound)
                 {
-                    this->addToScore(ScoreType::roundEnd);
+                    this->increaseScore(ScoreType::roundEnd);
+                }
+                else
+                {
+                    // Delay after the starship got hit.
+                    auto delayLength = settings_ptr->getLiveLostBreakTime();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(delayLength));
                 }
             }
 
@@ -85,27 +94,30 @@ class GameLogic
             this->waitForGameClock();
         }
 
-        void addToScore(ScoreType type)
+        /**
+         * Stops the game with the next gametick and returns the current Safe State.
+         */
+        void breakGameIfNecessary(std::shared_ptr<IInputBufferReader> inputBuffer_ptr, std::shared_ptr<Signal> gameClock)
         {
-            auto saveState_ptr = this->saveState_ptr;
-            auto settings_ptr = saveState_ptr->getSettings();
-            switch(type)
+            if(!inputBuffer_ptr->getAndResetBreakoutMenu())
             {
-                case centipedeHit:
-                {
-                    saveState_ptr->addToScore(settings_ptr->getPointsForCentipedeHit());
-                    break;
-                }
-                case mushroomKill:
-                {
-                    saveState_ptr->addToScore(settings_ptr->getPointsForMushroomKill());
-                    break;
-                }
-                case roundEnd:
-                {
-                    saveState_ptr->addToScore(settings_ptr->getPointsForRoundEnd());
-                    break;
-                }
+                return;
+            }
+
+            auto delayFunction = [gameClock]()
+            {
+                gameClock->await();
+            };
+            auto resume = this->menuLogic_ptr->runBreakoutMenu(delayFunction);
+            if(resume)
+            {
+                return;
+            }
+
+            // Game was ended -> Kill player to show result screen
+            while(this->alive())
+            {
+                this->loseLive();
             }
         }
 
@@ -129,7 +141,7 @@ class GameLogic
          */
         void executeGameClock(int gameTickLength, std::shared_ptr<Signal> gameClock)
         {
-            while(this->isRunning())
+            while(this->alive())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(gameTickLength));
                 gameClock->signal();
@@ -150,23 +162,13 @@ class GameLogic
          * Threadsafe check, wheather the game should continue running.
          * Also returns false if the player has no lives left.
          */
-        bool isRunning()
+        bool alive()
         {
-            if(this->saveState_ptr->getLives() <= 0)
+            if(this->saveState_ptr->getLives() > 0)
             {
-                return false;
+                return true;
             }
-            std::shared_lock runningLock(this->runningMutex);
-            return this->gameRunning;
-        }
-
-        /**
-         * Threadsafe method to change the running attribute.
-         */
-        void changeRunning(bool to)
-        {
-            std::unique_lock runningLock(this->runningMutex);
-            this->gameRunning = to;
+            return false;
         }
 
         /**
@@ -323,6 +325,33 @@ class GameLogic
         // //////////////////////////////////////////////////
 
         /**
+         * Increases the score according to the type this is called for.
+         */
+        void increaseScore(ScoreType type)
+        {
+            auto saveState_ptr = this->saveState_ptr;
+            auto settings_ptr = saveState_ptr->getSettings();
+            switch(type)
+            {
+                case centipedeHit:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForCentipedeHit());
+                    break;
+                }
+                case mushroomKill:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForMushroomKill());
+                    break;
+                }
+                case roundEnd:
+                {
+                    saveState_ptr->addToScore(settings_ptr->getPointsForRoundEnd());
+                    break;
+                }
+            }
+        }
+
+        /**
          * Spawns a bullet if required button was pressed.
          */
         void spawnBulletIfNecessary(std::shared_ptr<IInputBufferReader> inputBuffer_ptr, 
@@ -371,7 +400,7 @@ class GameLogic
                     // Check if Mushroom was killed
                     if(mushroomMap_ptr->getMushroom(bullet_ptr->getPosition().getLine(), bullet_ptr->getPosition().getColumn()) == 0)
                     {
-                        this->addToScore(ScoreType::mushroomKill);
+                        this->increaseScore(ScoreType::mushroomKill);
                     }
                     // Collision bullet & mushroom -> remove bullet.
                     bullet_ptr = bullets_ptr->erase(bullet_ptr);
@@ -451,7 +480,7 @@ class GameLogic
                     // Bullet has hit -> remove from list.
                     bullet_ptr = bullets_ptr->erase(bullet_ptr);
                     // Update score
-                    this->addToScore(ScoreType::centipedeHit);
+                    this->increaseScore(ScoreType::centipedeHit);
 
                     // Create new centipede from split of tail if necessary.
                     if(splitOfTail_ptr != nullptr)
@@ -519,9 +548,6 @@ class GameLogic
             this->hasDiedInRound = true;
             // Remove all enemies.
             this->saveState_ptr->getCentipedes()->clear();
-            // Delay.
-            auto delayLength = this->saveState_ptr->getSettings()->getLiveLostBreakTime();
-            std::this_thread::sleep_for(std::chrono::milliseconds(delayLength));
         }
 
         /**
@@ -532,14 +558,17 @@ class GameLogic
             std::string title = "Game Over";
             std::vector<std::string> text;
             text.push_back("Your score was " + std::to_string(this->saveState_ptr->getScore()));
-            this->ui_ptr->displayMenu(title, ConsoleColour::Red, text, -1, *(this->theme_ptr), *(this->saveState_ptr->getSettings()));
+            std::vector<std::string> options;
+            this->ui_ptr->displayMenu(title, ConsoleColour::Red, text, options, -1, *(this->theme_ptr), *(this->saveState_ptr->getSettings()));
         }
 
     public:
         GameLogic(std::shared_ptr<IInputBufferReader> inputBuffer_ptr,
                   std::shared_ptr<IUI> ui_ptr,
-                  std::shared_ptr<ITheme> theme_ptr)
+                  std::shared_ptr<ITheme> theme_ptr,
+                  std::shared_ptr<MenuLogic> menuLogic_ptr)
         {
+            this->menuLogic_ptr = menuLogic_ptr;
             this->inputBuffer_ptr = inputBuffer_ptr;
 
             this->ui_ptr = ui_ptr;
@@ -581,24 +610,11 @@ class GameLogic
         }
 
         /**
-         * Stops the game with the next gametick and returns the current Safe State.
-         */
-        std::shared_ptr<SaveState> breakGame()
-        {
-            this->changeRunning(false);
-            // wait for game to finish.
-            while(this->gameClock_thread_ptr != nullptr);
-            // return the current state of the game.
-            return this->saveState_ptr; 
-        }
-
-        /**
          * Continues the game of the given Safe State.
          */
         void continueGame(std::shared_ptr<SaveState> state)
         {
             this->saveState_ptr = state;
-            this->changeRunning(true);
             this->gameLoop();
         }
 };

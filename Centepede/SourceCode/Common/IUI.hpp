@@ -37,11 +37,12 @@ class IUI
 		 * Displays a menu of options.
 		 */
     virtual void displayMenu(std::string &title, 
-						                 ConsoleColour titleColour, 
-						                 std::vector<std::string> &options, 
-						                 int selected, 
-						                 ITheme &theme, 
-						                 CentipedeSettings &settings) = 0;
+							 ConsoleColour titleColour, 
+							 std::vector<std::string> &textLines,
+							 std::vector<std::string> &options, 
+							 int selected, 
+							 ITheme &theme, 
+							 CentipedeSettings &settings) = 0;
 };
 
 #endif

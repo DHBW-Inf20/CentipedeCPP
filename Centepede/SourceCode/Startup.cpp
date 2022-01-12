@@ -1,4 +1,5 @@
 #include "BusinessLogic/GameLogic.hpp"
+#include "BusinessLogic/MenuLogic.hpp"
 #include "UI/ConsoleOutput.hpp"
 #include "UI/StandardTheme.hpp"
 #include "Input/IInputBufferReader.hpp"
@@ -11,8 +12,9 @@ int main(int argc, char** argv){
     auto ui_ptr = std::make_shared<ConsoleOutput>();
     auto theme_ptr = std::make_shared<StandardTheme>();
     auto inputBuffer_ptr = std::make_shared<InputBuffer>();
+    auto menuLogic = std::make_shared<MenuLogic>(theme_ptr, ui_ptr, inputBuffer_ptr);
 
-    GameLogic gameLogic(inputBuffer_ptr, ui_ptr, theme_ptr);
+    GameLogic gameLogic(inputBuffer_ptr, ui_ptr, theme_ptr, menuLogic);
 
     // Initialize Keylistener
     Keylistener keylistener;
@@ -36,7 +38,10 @@ int main(int argc, char** argv){
         inputBuffer_ptr->setShot();
     });
 
-    // TODO RE EscapeKey for breakout
+    // EscapeKey for breakout
+    keylistener.registerHandler('q', [inputBuffer_ptr](){
+        inputBuffer_ptr->setBreakoutMenu();
+    });
 
     // Run game
     keylistener.startMultithreaded();
